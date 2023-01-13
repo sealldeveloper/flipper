@@ -1,0 +1,5 @@
+# CVS
+sub: /ext/subghz/Sub-GHz/Customer_Assistance_Buttons/CVS/CVS_Aisle_14.sub
+sub: /ext/subghz/Sub-GHz/Customer_Assistance_Buttons/CVS/CVS_Dental.sub
+sub: /ext/subghz/Sub-GHz/Customer_Assistance_Buttons/CVS/CVS_Shaving.sub
+sub: /ext/subghz/Sub-GHz/Customer_Assistance_Buttons/CVS/CVS_Stomach.sub

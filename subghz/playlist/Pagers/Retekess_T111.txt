@@ -1,0 +1,2 @@
+# RetekessT111
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/Retekess_Pagers/T111/Retekess_T111_RestID1_Pager0-99.sub

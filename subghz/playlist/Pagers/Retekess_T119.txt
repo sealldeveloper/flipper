@@ -1,0 +1,2 @@
+# RetekessT111
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/Retekess_Pagers/T119/Retekess_T119_Bruteforce_Extended.sub

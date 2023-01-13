@@ -1,0 +1,8 @@
+# RetekessTD157
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/Retekess_Pagers/TD157/P0.sub
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/Retekess_Pagers/TD157/P1.sub
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/Retekess_Pagers/TD157/P2.sub
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/Retekess_Pagers/TD157/P3.sub
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/Retekess_Pagers/TD157/P4.sub
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/Retekess_Pagers/TD157/P5.sub
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/Retekess_Pagers/TD157/P6.sub

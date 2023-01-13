@@ -1,0 +1,3 @@
+# LRSPagers
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/LRS_Pagers/jimilinuxguy_brutefrce.sub
+sub: /ext/subghz/Sub-GHz/Restaurant_Pagers/LRS_Pagers/Brute_first_12_loop.sub

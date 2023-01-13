@@ -1,0 +1,6 @@
+# Walgreens
+sub: /ext/subghz/Sub-GHz/Customer_Assistance_Buttons/Walgreens/Walgreens_Cough.sub
+sub: /ext/subghz/Sub-GHz/Customer_Assistance_Buttons/Walgreens/Walgreens_Dental.sub
+sub: /ext/subghz/Sub-GHz/Customer_Assistance_Buttons/Walgreens/Walgreens_Fam_Plan.sub
+sub: /ext/subghz/Sub-GHz/Customer_Assistance_Buttons/Walgreens/Walgreens_Skincare.sub
+sub: /ext/subghz/Sub-GHz/Customer_Assistance_Buttons/Walgreens/Walgreens_Vitamin.sub
