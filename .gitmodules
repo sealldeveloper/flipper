@@ -1,0 +1,3 @@
+[submodule "DbConnector"]
+	path = infrared/IRDB
+	url = https://github.com/logickworkshop/Flipper-IRDB
