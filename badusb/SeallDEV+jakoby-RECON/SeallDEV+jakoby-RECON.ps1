@@ -1111,7 +1111,7 @@ Remove-Item (Get-PSreadlineOption).HistorySavePath
 # Popup message to signal the payload is done
 
 #$done = New-Object -ComObject Wscript.Shell;$done.Popup("Update Completed",1)
-if([System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.ps1")){
-$s=New-Object -ComObject SAPI.SpVoice
-$s.Speak("GG Loser smiley face")
-}
+#if([System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.ps1")){
+#$s=New-Object -ComObject SAPI.SpVoice
+#$s.Speak("GG Loser smiley face")
+#}
