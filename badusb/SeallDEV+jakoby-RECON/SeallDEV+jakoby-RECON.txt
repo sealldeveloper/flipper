@@ -13,4 +13,4 @@ ENTER
 
 REM     Fill in the variable to set your exfil method.
 REM     $dc is the variable that holds your Discord webhook.  
-rem     $pers is the option for persistance, to autorun on startup, set to 'True' to enable
+rem     $pers is the option for persistance, to autorun on startup, set to 'True' to enable, set to 'Remove' to delete it.
