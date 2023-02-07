@@ -6,7 +6,7 @@ export=os.getcwd()
 os.chdir('..')
 
 for x in os.listdir():
-    if os.path.isdir(x) and x.startswith("Skylanders"):
+    if os.path.isdir(x):
         if not os.path.isdir(f'{export}/{x}'):
             os.mkdir(f'{export}/{x}')
         os.chdir(x)
